@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<!-- saved from url=(0062)chrome-extension://klbilodbkhgpocpkinbhgbmalpdggmkc/index.html -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+  <title>JSON to Table</title>
+  <style>
+    body { font-family: sans-serif; padding: 1em; background: #f7f7f7; }
+    table { border-collapse: collapse; width: 100%; margin-bottom: 2em; }
+    th, td { border: 1px solid #ccc; padding: 6px; text-align: left; vertical-align: top; }
+    table table { width: auto; }
+    td b { white-space: nowrap; }
+  </style>
+</head>
+<body>
+  <h2>Converted Table</h2>
+  <div id="output">
+    <table>
+      <tbody><tr>
+        <td style="vertical-align: top;"><b>phases</b></td>
+        <td><table><tbody><tr><th>Attribute</th><th>Phase 1: Docker Fundamentals</th><th>Phase 2: Minikube + Kubernetes Basics</th><th>Phase 3: Helm + Kubernetes App Configuration</th><th>Phase 4: Terraform Fundamentals</th><th>Phase 5: Terraform + Kubernetes + Helm</th><th>Phase 6: Ingress and DNS Simulation</th><th>Phase 7: Blue-Green &amp; Canary Deployments</th></tr><tr><td>status</td><td>complete</td><td>complete</td><td>pending</td><td>pending</td><td>pending</td><td>pending</td><td>pending</td></tr><tr><td>tasks</td><td><table><tbody><tr><td>Install Docker Desktop</td></tr><tr><td>Run containers using `docker run`</td></tr><tr><td>Use port binding (`-p` flag)</td></tr><tr><td>Inspect containers with `docker ps`, `docker inspect`</td></tr><tr><td>View logs: `docker logs &lt;name&gt;`</td></tr><tr><td>Use volumes and environment variables: `-v`, `-e`</td></tr><tr><td>Learn `docker-compose`</td></tr></tbody></table></td><td><table><tbody><tr><td>Install Minikube</td></tr><tr><td>Start a local Kubernetes cluster: `minikube start`</td></tr><tr><td>Create deployments: `kubectl create deployment`</td></tr><tr><td>Expose services: `kubectl expose deployment`</td></tr><tr><td>Access services via: `minikube service &lt;name&gt; --url`</td></tr><tr><td>Use `kubectl get pods`, `kubectl get svc`</td></tr></tbody></table></td><td><table><tbody><tr><td>Understand Helm chart structure</td></tr><tr><td>Install Helm and configure it with Minikube</td></tr><tr><td>Install charts (e.g., NGINX Ingress, Redis) using Helm</td></tr><tr><td>Create and deploy your own Helm chart</td></tr><tr><td>Customize behavior via `values.yaml` and CLI overrides</td></tr></tbody></table></td><td><table><tbody><tr><td>Install Terraform CLI</td></tr><tr><td>Understand Terraform config (`.tf`) structure</td></tr><tr><td>Write a local Terraform file to create Kubernetes resources (using K8s provider)</td></tr><tr><td>Understand `terraform init`, `plan`, `apply`, `destroy`</td></tr><tr><td>Track infrastructure with remote state (optional)</td></tr></tbody></table></td><td><table><tbody><tr><td>Use Terraform to provision infrastructure: clusters, DNS, storage (local or cloud)</td></tr><tr><td>Use Terraform Helm provider to install Helm charts (e.g., NGINX, cert-manager)</td></tr><tr><td>Pass Helm values through Terraform</td></tr><tr><td>Manage full environment lifecycle with Terraform only</td></tr><tr><td>Create reusable modules for multi-env setup (dev/stage/prod)</td></tr></tbody></table></td><td><table><tbody><tr><td>Install NGINX Ingress Controller (via Helm)</td></tr><tr><td>Define Ingress resources for internal routing</td></tr><tr><td>Simulate DNS using `/etc/hosts` or `minikube tunnel`</td></tr></tbody></table></td><td><table><tbody><tr><td>Use `kubectl rollout` for versioned releases</td></tr><tr><td>Explore deployment strategies: `RollingUpdate`, `Recreate`, etc.</td></tr><tr><td>Implement canary strategy using labels or Helm hooks</td></tr><tr><td>Track deployment health via `kubectl rollout status`</td></tr></tbody></table></td></tr></tbody></table></td>
+      </tr>
+    </tbody></table>
+  </div>
+  <script src="chrome-extension://klbilodbkhgpocpkinbhgbmalpdggmkc/popup.js"></script>
+
+
+</body></html>

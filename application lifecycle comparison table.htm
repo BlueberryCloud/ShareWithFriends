@@ -1,0 +1,61 @@
+<table border="1" cellpadding="8" cellspacing="0">
+  <thead>
+    <tr>
+      <th>Lifecycle Step</th>
+      <th>Old World (Bare Metal / VMs)</th>
+      <th>Kubernetes Approach</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Provision Infrastructure</td>
+      <td>Buy servers, rack them, install OS manually</td>
+      <td>Use cloud APIs or scripts to spin up nodes or a managed K8s cluster</td>
+    </tr>
+    <tr>
+      <td>Networking</td>
+      <td>Static IPs, manual firewall/VLAN config</td>
+      <td>Auto-assigned IPs, Services, Ingress, and Network Policies</td>
+    </tr>
+    <tr>
+      <td>OS & Dependencies</td>
+      <td>Install and patch shared runtimes (Java, .NET, etc.)</td>
+      <td>Use minimal container base images with isolated app dependencies</td>
+    </tr>
+    <tr>
+      <td>Deploy App</td>
+      <td>Copy files over SSH, run manual scripts or Octopus/TeamCity</td>
+      <td>Use <code>kubectl apply</code> or Helm to deploy containerized apps</td>
+    </tr>
+    <tr>
+      <td>Configuration</td>
+      <td>Config files on disk, hardcoded or edited manually</td>
+      <td>ConfigMaps and Secrets, injected into pods via env vars or volumes</td>
+    </tr>
+    <tr>
+      <td>Scaling</td>
+      <td>Clone VMs or request new servers</td>
+      <td><code>replicas: N</code> or use the Horizontal Pod Autoscaler</td>
+    </tr>
+    <tr>
+      <td>Monitoring</td>
+      <td>Nagios, New Relic, log into boxes to grep logs</td>
+      <td>Prometheus + Grafana + FluentBit + Loki</td>
+    </tr>
+    <tr>
+      <td>Health Checks</td>
+      <td>Often missing or custom cron scripts</td>
+      <td>Native <code>livenessProbe</code> and <code>readinessProbe</code> in each pod</td>
+    </tr>
+    <tr>
+      <td>Recovery</td>
+      <td>Manual restarts or entire box failover</td>
+      <td>Auto-restarts via Kubernetes controllers</td>
+    </tr>
+    <tr>
+      <td>Updates / Rollbacks</td>
+      <td>Manual patching, coordination-heavy</td>
+      <td>Declarative rolling updates and one-command rollbacks</td>
+    </tr>
+  </tbody>
+</table>

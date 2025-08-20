@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Helm to Kubernetes Flow</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      background-color: #fefefe;
+      padding: 2rem;
+    }
+    pre {
+      background-color: #f4f4f4;
+      padding: 1rem;
+      border-radius: 8px;
+      overflow-x: auto;
+      font-family: Consolas, Menlo, Monaco, 'Courier New', monospace;
+      font-size: 14px;
+      line-height: 1.4;
+    }
+    h1 {
+      font-size: 1.5rem;
+      margin-bottom: 1rem;
+    }
+  </style>
+</head>
+<body>
+  <h1>Helm to Kubernetes Flow (ASCII Diagram)</h1>
+  <pre>
+             ┌────────────────────────────┐
+             │        helm install       │
+             └────────────┬──────────────┘
+                          │
+                          ▼
+        ┌──────────────────────────────┐
+        │  Chart Templates + Values    │
+        └────────────┬─────────────────┘
+                     ▼
+          ┌──────────────────────┐
+          │  Rendered YAML files │  ← (Deployment, Service, etc.)
+          └────────────┬─────────┘
+                       ▼
+               Sent to kube-apiserver
+                       │
+                       ▼
+         ┌──────────────────────────────┐
+         │      Deployment (object)     │ ◄───── Declarative: “I want 1 NGINX app”
+         └────────────┬─────────────────┘
+                      ▼
+           ┌──────────────────────┐
+           │   ReplicaSet         │ ◄───── Maintains desired # of Pods
+           └────────────┬─────────┘
+                        ▼
+               ┌────────────────┐
+               │     Pod        │ ◄───── Runs app container(s)
+               └──────┬─────────┘
+                      ▼
+             ┌────────────────┐
+             │  Container     │ ◄───── Actual NGINX process
+             └────────────────┘
+
+Meanwhile...
+
+     ┌─────────────────────────────────────────────┐
+     │                  Service                    │ ◄───── Exposes the Pod
+     │ (ClusterIP / NodePort / LoadBalancer)       │
+     └─────────────────────────────────────────────┘
+  </pre>
+</body>
+</html>

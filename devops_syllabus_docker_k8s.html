@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>DevOps Learning Syllabus — Docker, K8s (Docker Desktop), Helm, Terraform</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    :root {
+      --bg: #0f172a;
+      --card: #111827;
+      --text: #e5e7eb;
+      --muted: #9ca3af;
+      --border: #1f2937;
+      --accent: #60a5fa;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+      background: linear-gradient(180deg, #0b1220, #0f172a);
+      color: var(--text);
+      padding: 24px;
+    }
+    h1 {
+      font-size: 24px; margin: 0 0 16px 0; letter-spacing: 0.3px;
+    }
+    p.desc { color: var(--muted); margin-top: 6px; margin-bottom: 24px; }
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 16px;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.25);
+    }
+    table { width: 100%; border-collapse: collapse; }
+    th, td {
+      border: 1px solid var(--border);
+      padding: 10px 12px;
+      vertical-align: top;
+      text-align: left;
+      font-size: 14px;
+    }
+    th { background: #0b1220; position: sticky; top: 0; }
+    code, pre, kbd {
+      background: #0b1220; color: #e5e7eb; border: 1px solid var(--border);
+      padding: 2px 6px; border-radius: 6px; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    }
+    ul { margin: 6px 0 0 18px; }
+    .note { color: var(--muted); font-size: 12px; }
+    .phase-title { color: var(--accent); font-weight: 600; }
+  </style>
+</head>
+<body>
+  <h1>DevOps Learning Syllabus</h1>
+  <p class="desc">Local stack using <b>Docker</b>, <b>Kubernetes via Docker Desktop</b>, <b>Helm</b>, and <b>Terraform</b>. Each phase lists concepts/tasks and an explicit command set you can run.</p>
+
+  <div class="card">
+    <table>
+      <thead>
+        <tr>
+          <th>Attribute</th>
+          <th><span class="phase-title">Phase 1:</span> Docker Fundamentals</th>
+          <th><span class="phase-title">Phase 2:</span> Kubernetes Basics (Docker Desktop)</th>
+          <th><span class="phase-title">Phase 3:</span> Helm + K8s App Configuration</th>
+          <th><span class="phase-title">Phase 4:</span> Terraform Fundamentals</th>
+          <th><span class="phase-title">Phase 5:</span> Terraform + K8s + Helm</th>
+          <th><span class="phase-title">Phase 6:</span> Ingress & DNS Simulation</th>
+          <th><span class="phase-title">Phase 7:</span> Blue‑Green & Canary Deployments</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><b>Status</b></td>
+          <td>complete</td>
+          <td>complete</td>
+          <td>pending</td>
+          <td>pending</td>
+          <td>pending</td>
+          <td>pending</td>
+          <td>pending</td>
+        </tr>
+
+        <tr>
+          <td><b>Tasks / Concepts</b></td>
+          <td>
+            <ul>
+              <li>Install Docker Desktop</li>
+              <li>Run containers with port binding</li>
+              <li>Inspect containers, view logs</li>
+              <li>Use volumes and environment variables</li>
+              <li>Compose basics</li>
+              <li>Create a simple static site (HTML page + image)</li>
+              <li>Serve the site via NGINX container</li>
+            </ul>
+          </td>
+          <td>
+            <ul>
+              <li>Enable Kubernetes in Docker Desktop</li>
+              <li>Verify cluster and nodes</li>
+              <li>Create Deployments and Services</li>
+              <li>Access services via <code>kubectl port-forward</code> or NodePort</li>
+            </ul>
+          </td>
+          <td>
+            <ul>
+              <li>Understand Helm chart structure</li>
+              <li>Install Helm; add and update repos</li>
+              <li>Install charts (e.g., Redis)</li>
+              <li>Create and deploy your own chart</li>
+              <li>Override values via <code>values.yaml</code> and CLI</li>
+            </ul>
+          </td>
+          <td>
+            <ul>
+              <li>Install Terraform CLI</li>
+              <li>Understand <code>.tf</code> structure</li>
+              <li>Init/plan/apply/destroy cycle</li>
+              <li>Remote state (optional)</li>
+            </ul>
+          </td>
+          <td>
+            <ul>
+              <li>Use Terraform to manage K8s resources</li>
+              <li>Use Terraform Helm provider for releases</li>
+              <li>Pass Helm values via Terraform</li>
+              <li>Create reusable modules (dev/stage/prod)</li>
+            </ul>
+          </td>
+          <td>
+            <ul>
+              <li>Install NGINX Ingress Controller (Helm)</li>
+              <li>Define Ingress resources for routing</li>
+              <li>Simulate DNS with <code>/etc/hosts</code> (Docker Desktop networking)</li>
+            </ul>
+          </td>
+          <td>
+            <ul>
+              <li>Use <code>kubectl rollout</code> for versioned releases</li>
+              <li>Implement rolling, blue‑green, and canary strategies</li>
+              <li>Track deployment health</li>
+            </ul>
+          </td>
+        </tr>
+
+        <tr>
+          <td><b>Commands</b></td>
+          <td>
+            <!-- Phase 1 commands -->
+            <ul>
+              <li><code>docker --version</code></li>
+              <li><code>docker run -d -p 8080:80 nginx</code></li>
+              <li><code>docker ps</code>, <code>docker inspect &lt;container&gt;</code>, <code>docker logs &lt;container&gt;</code></li>
+              <li><code>docker run -v %CD%/site:/usr/share/nginx/html:ro -p 8080:80 nginx</code> <span class="note">(Windows PowerShell)</span></li>
+              <li><code>docker run -v $(pwd)/site:/usr/share/nginx/html:ro -p 8080:80 nginx</code> <span class="note">(macOS/Linux)</span></li>
+              <li>Create a page + image:
+                <ul>
+                  <li><code>mkdir site</code></li>
+                  <li><code>echo "&lt;h1&gt;Hello&lt;/h1&gt;&lt;img src='cat.png' /&gt;" &gt; site/index.html</code></li>
+                  <li>(Place <code>cat.png</code> inside <code>site/</code>)</li>
+                </ul>
+              </li>
+              <li>Optional Dockerfile approach:
+                <ul>
+                  <li><code>printf "FROM nginx:alpine\nCOPY site /usr/share/nginx/html" &gt; Dockerfile</code></li>
+                  <li><code>docker build -t mysite .</code></li>
+                  <li><code>docker run -d -p 8080:80 mysite</code></li>
+                </ul>
+              </li>
+              <li><code>docker-compose up -d</code> <span class="note">(if using compose)</span></li>
+            </ul>
+          </td>
+          <td>
+            <!-- Phase 2 commands -->
+            <ul>
+              <li>Enable K8s: Docker Desktop → Settings → <b>Kubernetes</b> → Enable</li>
+              <li><code>kubectl version --client</code></li>
+              <li><code>kubectl cluster-info</code></li>
+              <li><code>kubectl get nodes</code></li>
+              <li><code>kubectl create deployment web --image=nginx</code></li>
+              <li><code>kubectl get pods</code></li>
+              <li><code>kubectl expose deployment web --port=80 --type=NodePort</code></li>
+              <li><code>kubectl get svc</code></li>
+              <li><code>kubectl port-forward svc/web 8080:80</code></li>
+              <li><code>kubectl delete svc/web</code>, <code>kubectl delete deploy/web</code></li>
+            </ul>
+          </td>
+          <td>
+            <!-- Phase 3 commands -->
+            <ul>
+              <li><code>helm version</code></li>
+              <li><code>helm repo add bitnami https://charts.bitnami.com/bitnami</code></li>
+              <li><code>helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx</code></li>
+              <li><code>helm repo update</code></li>
+              <li><code>helm install my-redis bitnami/redis</code></li>
+              <li><code>helm list</code></li>
+              <li><code>helm uninstall my-redis</code></li>
+              <li><code>helm create mychart</code></li>
+              <li><code>helm install myapp ./mychart -f values.yaml</code></li>
+            </ul>
+          </td>
+          <td>
+            <!-- Phase 4 commands -->
+            <ul>
+              <li><code>terraform -version</code></li>
+              <li><code>terraform init</code></li>
+              <li><code>terraform plan</code></li>
+              <li><code>terraform apply</code></li>
+              <li><code>terraform destroy</code></li>
+            </ul>
+          </td>
+          <td>
+            <!-- Phase 5 commands -->
+            <ul>
+              <li>Within Terraform:
+                <ul>
+                  <li>Providers: <code>kubernetes</code>, <code>helm</code></li>
+                  <li><code>terraform init</code></li>
+                  <li><code>terraform plan -out=tfplan</code></li>
+                  <li><code>terraform apply tfplan</code></li>
+                </ul>
+              </li>
+            </ul>
+          </td>
+          <td>
+            <!-- Phase 6 commands -->
+            <ul>
+              <li><code>helm install ingress-nginx ingress-nginx/ingress-nginx --namespace ingress-nginx --create-namespace</code></li>
+              <li><code>kubectl get pods -n ingress-nginx</code></li>
+              <li><code>kubectl get svc -n ingress-nginx</code></li>
+              <li>Create Ingress YAML and apply: <code>kubectl apply -f ingress.yaml</code></li>
+              <li>Edit <code>/etc/hosts</code> (Windows: <code>C:\Windows\System32\drivers\etc\hosts</code>) to map hostnames to <code>127.0.0.1</code> or the Docker Desktop VM IP</li>
+            </ul>
+          </td>
+          <td>
+            <!-- Phase 7 commands -->
+            <ul>
+              <li><code>kubectl rollout status deployment/myapp</code></li>
+              <li><code>kubectl set image deployment/myapp myapp=nginx:1.25</code></li>
+              <li><code>kubectl rollout history deployment/myapp</code></li>
+              <li><code>kubectl rollout undo deployment/myapp</code></li>
+              <li>Blue‑Green via labels/services: apply manifests to switch selector</li>
+              <li>Canary via two Deployments with traffic split (Ingress weights or service selectors)</li>
+              <li><code>kubectl get pods --show-labels</code></li>
+            </ul>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <p class="note">Tip: For Windows PowerShell, prefer <code>%CD%</code> for the current directory; for macOS/Linux use <code>$(pwd)</code>.</p>
+  </div>
+</body>
+</html>

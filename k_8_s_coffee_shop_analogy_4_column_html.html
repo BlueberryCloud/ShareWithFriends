@@ -1,0 +1,267 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Kubernetes Coffee Shop Analogy — Expanded 4‑Column Table</title>
+  <style>
+    :root {
+      --bg: #0b0c10;
+      --panel: #111319;
+      --ink: #e8ecf1;
+      --muted: #b9c0c8;
+      --accent: #5cc8ff;
+      --border: #222634;
+      --row: #0f1218;
+    }
+    @media (prefers-color-scheme: light) {
+      :root {
+        --bg: #f7f9fb;
+        --panel: #ffffff;
+        --ink: #0b1220;
+        --muted: #475569;
+        --accent: #0ea5e9;
+        --border: #e5e7eb;
+        --row: #f9fafb;
+      }
+    }
+    html, body {
+      height: 100%;
+      background: var(--bg);
+      color: var(--ink);
+      font: 16px/1.55 system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+      margin: 0;
+    }
+    .wrap {
+      max-width: 1100px;
+      margin: 3rem auto;
+      padding: 0 1rem;
+    }
+    header h1 {
+      margin: 0 0 .25rem 0;
+      letter-spacing: .2px;
+      font-weight: 800;
+      font-size: clamp(1.5rem, 2vw + 1rem, 2.1rem);
+    }
+    header p {
+      margin: 0 0 1.25rem 0;
+      color: var(--muted);
+    }
+    .tools {
+      display: flex;
+      gap: .75rem;
+      flex-wrap: wrap;
+      margin-bottom: 1rem;
+    }
+    .btn {
+      border: 1px solid var(--border);
+      background: var(--panel);
+      color: var(--ink);
+      padding: .55rem .85rem;
+      border-radius: .65rem;
+      cursor: pointer;
+      font-weight: 600;
+      transition: transform .04s ease, background .2s ease, border-color .2s ease;
+    }
+    .btn:hover { border-color: var(--accent); }
+    .btn:active { transform: translateY(1px); }
+
+    .table-card {
+      border: 1px solid var(--border);
+      background: var(--panel);
+      border-radius: .9rem;
+      overflow: hidden;
+      box-shadow: 0 1px 0 rgba(0,0,0,.04);
+    }
+    .scroll-x { overflow-x: auto; }
+
+    table { width: 100%; border-collapse: collapse; min-width: 880px; }
+    caption { text-align: left; padding: 1rem 1rem .5rem; color: var(--muted); font-size: .95rem; }
+
+    thead th {
+      text-align: left;
+      font-size: .95rem;
+      font-weight: 800;
+      background: var(--panel);
+      position: sticky; top: 0; z-index: 1;
+      border-bottom: 1px solid var(--border);
+      padding: .85rem 1rem;
+      white-space: nowrap;
+    }
+
+    tbody td, tbody th[scope="row"] {
+      padding: .85rem 1rem;
+      vertical-align: top;
+      border-bottom: 1px solid var(--border);
+    }
+    tbody tr:nth-child(even) { background: var(--row); }
+    tbody th[scope="row"] { font-weight: 700; }
+
+    code.k { font-weight: 700; }
+
+    footer { color: var(--muted); margin-top: .75rem; font-size: .9rem; }
+
+    /* Print */
+    @media print {
+      body { background: #fff; color: #000; }
+      .wrap { margin: 0; padding: 0; }
+      .tools { display: none; }
+      .table-card { border: none; box-shadow: none; }
+      thead { display: table-header-group; }
+      tr, img { page-break-inside: avoid; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <h1>Kubernetes Coffee Shop Analogy — Expanded 4‑Column Table</h1>
+      <p>A practical mapping from Kubernetes concepts to a coffee shop chain metaphor, plus how the same need was handled pre‑K8s and what actually happens inside the cluster.</p>
+      <div class="tools">
+        <button class="btn" onclick="window.print()" aria-label="Print this page">Print</button>
+        <button class="btn" id="compactBtn" aria-pressed="false" aria-label="Toggle compact density" onclick="toggleCompact()">Toggle compact</button>
+      </div>
+    </header>
+
+    <section class="table-card">
+      <div class="scroll-x">
+        <table>
+          <caption>Last updated: August 19, 2025</caption>
+          <thead>
+            <tr>
+              <th style="width:18%">Kubernetes Concept</th>
+              <th style="width:27%">Coffee Shop Analogy</th>
+              <th style="width:27%">Old Infrastructure Behavior (Pre‑K8s)</th>
+              <th style="width:28%">What Happens in the Cluster</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr id="cluster">
+              <th scope="row">Cluster</th>
+              <td>The entire coffee shop chain under one brand.</td>
+              <td>Multiple servers/datacenters managed individually.</td>
+              <td>Collection of nodes governed by a single control plane maintaining desired state.</td>
+            </tr>
+            <tr id="node">
+              <th scope="row">Node</th>
+              <td>A single shop building where baristas work.</td>
+              <td>One physical server or VM.</td>
+              <td>Runs <code class="k">kubelet</code> and a container runtime; executes pods and reports status to the API server.</td>
+            </tr>
+            <tr id="pod">
+              <th scope="row">Pod</th>
+              <td>A team of baristas sharing the same counter/tools.</td>
+              <td>One process (or a couple of tightly‑coupled processes) on a server.</td>
+              <td>Smallest deployable unit: one or more containers with shared network namespace and optional shared storage.</td>
+            </tr>
+            <tr id="deployment">
+              <th scope="row">Deployment</th>
+              <td>Shop manager ensures enough baristas are on shift and replaces absences.</td>
+              <td>Sysadmins/scripts manually restarting or redeploying apps.</td>
+              <td>Owns ReplicaSets; performs rolling updates/rollbacks; keeps replicas at the desired version/count.</td>
+            </tr>
+            <tr id="replicaset">
+              <th scope="row">ReplicaSet</th>
+              <td>Always keeping, say, 3 baristas on shift.</td>
+              <td>Fixed process counts tracked manually.</td>
+              <td>Ensures the specified number of pod replicas are running at all times.</td>
+            </tr>
+            <tr id="service">
+              <th scope="row">Service</th>
+              <td>The cashier counter; customers don’t care which barista serves them.</td>
+              <td>Load balancers configured/maintained by ops teams.</td>
+              <td>Provides a stable ClusterIP/DNS name and load‑balances traffic across matching pods via label selectors.</td>
+            </tr>
+            <tr id="ingress">
+              <th scope="row">Ingress</th>
+              <td>Storefront + signage routing customers to the right counter.</td>
+              <td>Manual DNS/F5 appliances/Nginx per‑host configs.</td>
+              <td>HTTP(S) entry to the cluster; an Ingress controller programs rules to route requests to Services.</td>
+            </tr>
+            <tr id="namespace">
+              <th scope="row">Namespace</th>
+              <td>Different sections/teams within the chain (kitchen vs. baristas).</td>
+              <td>Separate environments/projects often on different clusters or VMs.</td>
+              <td>Logical scoping and isolation for names, RBAC, quotas, policies, and resource limits.</td>
+            </tr>
+            <tr id="config-secrets">
+              <th scope="row">ConfigMap / Secret</th>
+              <td>Recipe book (ConfigMap) and the secret‑sauce recipe in a safe (Secret).</td>
+              <td>Config files on disk; env vars; passwords tucked away in ad‑hoc places or vendor vaults.</td>
+              <td>Injects configuration and sensitive values into pods (env vars, files); Secrets are base64‑encoded and can be encrypted at rest.</td>
+            </tr>
+            <tr id="volume">
+              <th scope="row">Volume</th>
+              <td>Storage closet/fridge with beans, milk, syrups that persist across shifts.</td>
+              <td>Mounted disks, NFS shares, SAN/NAS.</td>
+              <td>Attaches storage to pods (ephemeral like <em>emptyDir</em> or persistent via PVCs/PVs and storage classes).</td>
+            </tr>
+            <tr id="control-plane">
+              <th scope="row">Control Plane</th>
+              <td>Headquarters (corporate office) setting staffing, menus, and opening/closing stores.</td>
+              <td>Central IT teams, tickets, and manual coordination.</td>
+              <td><strong>API Server</strong> validates/persists state; <strong>Scheduler</strong> assigns pods; <strong>Controllers</strong> reconcile desired vs. actual state; <strong>etcd</strong> stores cluster data.</td>
+            </tr>
+            <tr id="kubelet">
+              <th scope="row">Kubelet</th>
+              <td>Assistant manager making sure baristas follow recipes and stay on shift.</td>
+              <td>Local process monitors (systemd, watchdogs).</td>
+              <td>Watches desired pod specs from the API server and ensures containers are created, healthy, and restarted if needed.</td>
+            </tr>
+            <tr id="kube-proxy">
+              <th scope="row">Kube‑proxy</th>
+              <td>Doorman directing customers to the right cashier/counter.</td>
+              <td>Manual firewall/LB rules (iptables/HAProxy) managed by ops.</td>
+              <td>Programs node‑level rules (iptables/ipvs) so Service virtual IPs route to healthy pod endpoints.</td>
+            </tr>
+            <tr id="coredns">
+              <th scope="row">CoreDNS</th>
+              <td>Phone book telling you which shop/counter serves “lattes”.</td>
+              <td>Corporate DNS or static host entries.</td>
+              <td>Resolves Service and Pod DNS names to cluster IPs; integrates with Kubernetes via the API.</td>
+            </tr>
+            <tr id="hpa">
+              <th scope="row">Horizontal Pod Autoscaler (HPA)</th>
+              <td>HQ calls in extra baristas for the morning rush.</td>
+              <td>Humans scrambling to add servers or spin up VMs under load.</td>
+              <td>Watches metrics (CPU/memory/custom) and increases/decreases pod replicas within bounds.</td>
+            </tr>
+            <tr id="daemonset">
+              <th scope="row">DaemonSet</th>
+              <td>Each shop always has a cleaner on duty.</td>
+              <td>Manually installing agents on every server.</td>
+              <td>Ensures one (or more) pod runs on every node (e.g., log shippers, node exporters, CNI components).</td>
+            </tr>
+            <tr id="statefulset">
+              <th scope="row">StatefulSet</th>
+              <td>Barista who remembers your order every time.</td>
+              <td>Carefully maintained stateful servers with bespoke configs.</td>
+              <td>Stable network IDs and persistent storage per replica; ordered rollout/termination for databases and stateful apps.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <footer>
+      Pro tip: Pair this with a live <code>kubectl</code> demo — scale a Deployment and watch the Service continue to route without clients noticing.
+    </footer>
+  </div>
+
+  <script>
+    function toggleCompact() {
+      const pressed = this?.ariaPressed === 'true' || document.getElementById('compactBtn').getAttribute('aria-pressed') === 'true';
+      const next = !pressed;
+      document.getElementById('compactBtn').setAttribute('aria-pressed', String(next));
+      document.body.classList.toggle('compact', next);
+    }
+  </script>
+  <style>
+    /* Compact density mode toggled by the button */
+    body.compact thead th,
+    body.compact tbody td,
+    body.compact tbody th[scope="row"] { padding: .55rem .7rem; }
+    body.compact table { font-size: .95rem; }
+  </style>
+</body>
+</html>

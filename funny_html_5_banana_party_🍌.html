@@ -1,0 +1,218 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Banana Party 🍌 — Extremely Serious Webpage</title>
+  <style>
+    :root{
+      --bg1: #0ea5e9; /* sky-400 */
+      --bg2: #f59e0b; /* amber-500 */
+      --ink: #0b1021;
+      --card: rgba(255,255,255,.85);
+      --accent: #14b8a6; /* teal-500 */
+    }
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, Arial, "Apple Color Emoji","Segoe UI Emoji";
+      color: var(--ink);
+      background: linear-gradient(120deg,var(--bg1),var(--bg2));
+      background-size: 200% 200%;
+      animation: sky 10s ease-in-out infinite;
+      overflow-x:hidden;
+    }
+    @media (prefers-reduced-motion: reduce){
+      body{animation:none}
+    }
+    @keyframes sky{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
+
+    .wrap{
+      max-width: 900px;
+      margin: 2rem auto;
+      padding: clamp(1rem, 2vw, 2rem);
+      background: var(--card);
+      border-radius: 20px;
+      box-shadow: 0 10px 30px rgba(0,0,0,.2);
+      position: relative;
+      z-index: 1;
+    }
+
+    h1{
+      margin:0 0 .25rem;
+      font-size: clamp(1.8rem, 4vw, 3rem);
+      display:flex;gap:.5rem;align-items:center;flex-wrap:wrap
+    }
+    .tagline{margin:.25rem 0 1rem;opacity:.8}
+
+    .controls{display:flex;flex-wrap:wrap;gap:.6rem;margin:.8rem 0 1.2rem}
+    button{
+      border:0;cursor:pointer;border-radius:999px;padding:.7rem 1rem;font-weight:700;
+      background: var(--accent); color:#00231f; box-shadow: 0 6px 0 #0d9488, 0 8px 16px rgba(0,0,0,.25);
+      transition: transform .05s ease;
+    }
+    button:hover{transform: translateY(-1px)}
+    button:active{transform: translateY(1px)}
+    button.secondary{background:#fff;color:#111;box-shadow:0 6px 0 #ddd,0 8px 16px rgba(0,0,0,.15)}
+
+    #stage{position:relative;min-height:220px;border-radius:16px;background: rgba(255,255,255,.6);overflow:hidden}
+
+    .emoji{position:absolute;user-select:none;pointer-events:none;filter: drop-shadow(0 6px 6px rgba(0,0,0,.25));}
+
+    @keyframes floatUp{
+      from{transform:translateY(0) rotate(var(--spin-start)); opacity: 1}
+      to{transform:translateY(-120vh) rotate(var(--spin-end)); opacity: .9}
+    }
+
+    .joke{min-height:2.2em;font-size:1.05rem;font-weight:600;margin:.8rem 0 0}
+
+    footer{margin-top:1rem;opacity:.7;font-size:.9rem}
+    footer a{color:#0f766e}
+
+    .meter{height:8px;background:#0001;border-radius:999px;overflow:hidden}
+    .meter>span{display:block;height:100%;background:linear-gradient(90deg,#22c55e,#f59e0b,#ef4444);width:0%}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>Banana Party <span aria-hidden="true">🍌🎉</span></h1>
+    <p class="tagline">The internet's most unnecessary page. 100% organic nonsense.</p>
+
+    <div class="controls">
+      <button id="party">⚡ Chaos Mode</button>
+      <button id="burst" class="secondary">➕ Add 20 more</button>
+      <button id="calm" class="secondary">🫠 Calm Down</button>
+      <button id="joke">🃏 Tell me a joke</button>
+    </div>
+
+    <div class="meter" aria-hidden="true"><span id="chaosBar"></span></div>
+
+    <div id="stage" aria-label="Confetti stage" role="region"></div>
+
+    <p class="joke" id="jokeBox">Tip: click anywhere (or press <kbd>B</kbd>) to spawn bananas. Press <kbd>P</kbd> for party.</p>
+
+    <footer>
+      <div>No frameworks were harmed in the making of this page. If your boss asks, this is a <em>load test</em> for emojis.</div>
+    </footer>
+  </div>
+
+<script>
+(function(){
+  const stage = document.getElementById('stage');
+  const partyBtn = document.getElementById('party');
+  const burstBtn = document.getElementById('burst');
+  const calmBtn = document.getElementById('calm');
+  const jokeBtn = document.getElementById('joke');
+  const chaosBar = document.getElementById('chaosBar');
+  const jokeBox = document.getElementById('jokeBox');
+
+  const EMOJIS = ['🍌','🦄','🥑','🍩','🍕','🚀','🪩','🥳','🕺','💃','🦖','🌮','☕','🧁','🐸','🤹'];
+
+  let chaosTimer = null;
+  let chaosLevel = 0; // 0..100
+  let prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  // Simple WebAudio bloop (no external files)
+  const audioCtx = new (window.AudioContext || window.webkitAudioContext || function(){return null;})();
+  function bloop(freq=660, dur=0.07){
+    if(!audioCtx) return;
+    const o = audioCtx.createOscillator();
+    const g = audioCtx.createGain();
+    o.type = 'square';
+    o.frequency.value = freq;
+    g.gain.value = 0.06;
+    o.connect(g); g.connect(audioCtx.destination);
+    o.start();
+    setTimeout(()=>{o.stop();}, dur*1000);
+  }
+
+  function rand(min,max){return Math.random()*(max-min)+min}
+  function pick(arr){return arr[Math.floor(Math.random()*arr.length)]}
+
+  function spawnEmoji(symbol){
+    const span = document.createElement('span');
+    span.className = 'emoji';
+    span.textContent = symbol || pick(EMOJIS);
+    const size = rand(24, prefersReduced? 36 : 64);
+    span.style.fontSize = size + 'px';
+    span.style.left = rand(-10, 100) + 'vw';
+    span.style.bottom = '-5vh';
+    const rotStart = rand(-90, 90) + 'deg';
+    const rotEnd = (Math.random()>.5? rand(180,720) : rand(-720,-180)) + 'deg';
+    span.style.setProperty('--spin-start', rotStart);
+    span.style.setProperty('--spin-end', rotEnd);
+
+    const dur = prefersReduced? rand(3,5) : rand(7,12);
+    span.style.animation = `floatUp ${dur}s linear forwards`;
+    stage.appendChild(span);
+    span.addEventListener('animationend', ()=> span.remove());
+
+    if(symbol==='🍌' || Math.random()>.7) bloop(rand(400,900), .05);
+
+    // bump chaos meter (decays over time)
+    chaosLevel = Math.min(100, chaosLevel + (prefersReduced? 1 : 2));
+    updateMeter();
+  }
+
+  function updateMeter(){
+    chaosBar.style.width = chaosLevel + '%';
+  }
+
+  // decay chaos bar
+  setInterval(()=>{ chaosLevel = Math.max(0, chaosLevel - 1); updateMeter(); }, 120);
+
+  function startParty(){
+    if(chaosTimer) return;
+    partyBtn.disabled = true; partyBtn.textContent = '⚡ Partying...';
+    let interval = prefersReduced? 350 : 160;
+    chaosTimer = setInterval(()=>{
+      // spawn 1–3 emojis each tick
+      const n = prefersReduced? 1 : Math.floor(rand(1,4));
+      for(let i=0;i<n;i++) spawnEmoji();
+    }, interval);
+  }
+
+  function stopParty(){
+    clearInterval(chaosTimer); chaosTimer = null;
+    partyBtn.disabled = false; partyBtn.textContent = '⚡ Chaos Mode';
+  }
+
+  function addBurst(count=20){
+    for(let i=0;i<count;i++) spawnEmoji('🍌');
+  }
+
+  const JOKES = [
+    "I told my HTML it had bad style. It said, 'That’s just your CSS talking.'",
+    "Why did the developer go broke? Because they used up all their cache.",
+    "What do you call 8 hobbits? A hobbyte.",
+    "I would tell you a UDP joke, but you might not get it.",
+    "My code’s like an onion. It makes people cry.",
+    "404: Joke not found. (Actually, here it is.)",
+    "I tried to catch some fog… I mist.",
+  ];
+  function showJoke(){ jokeBox.textContent = pick(JOKES); bloop(520,.07) }
+
+  // Controls
+  partyBtn.addEventListener('click', startParty);
+  calmBtn.addEventListener('click', ()=>{ stopParty(); jokeBox.textContent = 'Okay, vibes restored. 🍃'; bloop(280,.05); });
+  burstBtn.addEventListener('click', ()=> addBurst(20));
+  jokeBtn.addEventListener('click', showJoke);
+
+  // Interactions
+  document.addEventListener('click', (e)=>{
+    // Only if click is inside stage/wrap area
+    const sym = Math.random()>.6 ? '🍌' : null;
+    spawnEmoji(sym);
+  });
+  document.addEventListener('keydown', (e)=>{
+    if(e.key.toLowerCase()==='b') spawnEmoji('🍌');
+    if(e.key.toLowerCase()==='p') startParty();
+    if(e.key.toLowerCase()==='c') stopParty();
+  });
+
+  // Initial sprinkle
+  for(let i=0;i<(prefersReduced? 6 : 12); i++) setTimeout(()=>spawnEmoji(), i*120);
+})();
+</script>
+</body>
+</html>

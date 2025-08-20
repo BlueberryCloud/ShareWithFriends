@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Kubernetes ASCII Diagram - Full 17 Terms</title>
+  <style>
+    body {
+      background-color: #1e1e1e;
+      color: #f0f0f0;
+      font-family: monospace;
+      padding: 2rem;
+    }
+    pre {
+      background-color: #2d2d2d;
+      padding: 1.5rem;
+      border-radius: 8px;
+      overflow-x: auto;
+      white-space: pre;
+    }
+    h1 {
+      text-align: center;
+      color: #79b8ff;
+    }
+    details {
+      margin: 1rem 0;
+    }
+    summary {
+      font-weight: bold;
+      cursor: pointer;
+      color: #ffcc66;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Kubernetes Architecture: Full ASCII Diagram (17 Concepts)</h1>
+
+  <pre><code>
++-----------------------------+
+|      CONTROL PLANE NODE    |
+|----------------------------|
+|                            |
+|  [ kube-apiserver ]        | <-- main cluster API
+|  [ etcd ]                  | <-- stores all cluster state
+|  [ controller-manager ]    | <-- manages controllers (e.g., Deployment)
+|  [ scheduler ]             | <-- assigns Pods to Nodes
+|                            |
++-------------+--------------+
+              |
+              | communicates with
+              v
++------------------------------------------+
+|              CLUSTER LEVEL               |
+|------------------------------------------|
+|                                          |
+|  +--> ConfigMap / Secret ---------------+|
+|  |                                       |
+|  +--> Namespace                         |
+|  +--> Deployment YAML ------------------+--> stored in etcd, read by controllers
+|  +--> Ingress (rules) ------------------+--> stored config for HTTP routes
+|                                          |
++-------------------+----------------------+
+                    |
+                    | scheduler places Pods on Nodes
+                    v
++---------------------------+     +---------------------------+
+|       WORKER NODE 1       |     |       WORKER NODE 2       |
+|---------------------------|     |---------------------------|
+| [ kubelet ]               |     | [ kubelet ]               |
+| [ kube-proxy ]            |     | [ kube-proxy ]            |
+|                           |     |                           |
+| [ Pod: app 1 ]            |     | [ Pod: app 3 ]            |
+| [ Pod: app 2 ]            |     | [ Pod: app 4 ]            |
+| [ Ingress Controller ]    |     |                           |
+|   (e.g., NGINX)           |     |                           |
++---------------------------+     +---------------------------+
+
++---------------------------+
+|      Networking Layer     |
+|---------------------------|
+|  Service (ClusterIP)      | <-- stable internal routing
+|  Service (NodePort)       | <-- exposes via node port
+|  Service (LoadBalancer)   | <-- cloud provider LB
++---------------------------+
+
++---------------------------+
+|     User Interaction      |
+|---------------------------|
+|   kubectl CLI             | <-- user input to API server
++---------------------------+
+  </code></pre>
+
+</body>
+</html>
