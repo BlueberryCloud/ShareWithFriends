@@ -1,18 +1,137 @@
 ﻿<!doctype html>
-<html>
+<html lang="en">
 <head>
-  <meta charset="utf-8">
-  <title>Index of Files</title>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>ShareWithFriends â€” Index</title>
+<style>
+  :root {
+    --bg:#0f1020; --card:#17182b; --ink:#e9e9ff; --muted:#a5a7d4;
+    --accent:#7c6cff; --accent2:#ff5db1; --ring:rgba(124,108,255,.35);
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0;color:var(--ink);
+    font:16px/1.5 system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+    background:
+      radial-gradient(1000px 700px at 8% -10%, #27224f 0%, transparent 60%),
+      radial-gradient(900px 600px at 110% 10%, #2b1b3f 0%, transparent 60%),
+      linear-gradient(180deg, #0b0b18, #0f1020 35%);
+    min-height:100vh;
+  }
+  header{
+    border-bottom:1px solid rgba(124,108,255,.25);
+    background:linear-gradient(180deg, rgba(15,16,32,.9), rgba(15,16,32,.55));
+    backdrop-filter:blur(6px);
+  }
+  .wrap{max-width:1100px;margin:0 auto;padding:18px 16px}
+  h1{margin:0;font-size:22px;font-weight:800;letter-spacing:.25px}
+  .muted{color:var(--muted);font-size:13px;margin-top:4px}
+
+  .hero{max-width:1100px;margin:24px auto; padding:0 16px; display:grid; grid-template-columns:1.2fr .8fr; gap:24px}
+  @media (max-width:900px){.hero{grid-template-columns:1fr}}
+  .card{background:var(--card); border:1px solid rgba(124,108,255,.2); border-radius:16px; padding:18px; box-shadow:0 10px 30px rgba(0,0,0,.25)}
+
+  .list{list-style:none; padding:0; margin:0}
+  .item{display:flex;align-items:center;gap:10px;padding:10px 12px;margin:8px 0;
+    background:linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,0));
+    border:1px solid rgba(124,108,255,.18); border-radius:12px;
+    transition:transform .06s ease, border-color .2s}
+  .item:hover{transform:translateY(-1px); border-color:rgba(255,93,177,.45)}
+  .badge{min-width:26px;height:26px;border-radius:8px;display:inline-flex;align-items:center;justify-content:center;
+    font-size:12px;font-weight:800;color:#fff;background:linear-gradient(135deg,var(--accent),var(--accent2));
+    box-shadow:0 6px 16px rgba(124,108,255,.35)}
+  .name{flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  a{color:var(--ink); text-decoration:none; border-bottom:1px dotted rgba(124,108,255,.45)}
+  a:hover{color:#fff; border-bottom-color:rgba(255,93,177,.75)}
+  .small{color:var(--muted); font-size:12px}
+
+  .avatar{
+    aspect-ratio: 1/1; width:100%;
+    border:1px solid rgba(124,108,255,.2); border-radius:16px;
+    background:
+      radial-gradient(220px 160px at 70% 20%, rgba(255,255,255,.06), transparent 60%),
+      radial-gradient(180px 140px at 20% 85%, rgba(255,93,177,.20), transparent 70%);
+    display:grid; place-items:center;
+  }
+  .note{ text-align:center; color:var(--muted); font-size:12px; margin-top:10px }
+</style>
 </head>
 <body>
-  <h1>Available Files</h1>
-  <ul>    <li><a href="0001.html">0001.html</a></li>
-    <li><a href="devops_syllabus_docker_k8s.html">devops_syllabus_docker_k8s.html</a></li>
-    <li><a href="funny_html_5_banana_party_🍌.html">funny_html_5_banana_party_🍌.html</a></li>
-    <li><a href="kubernetes_lemonade_analogy_table.html">kubernetes_lemonade_analogy_table.html</a></li>
-    <li><a href="k_8_s_ascii_full_diagram.html">k_8_s_ascii_full_diagram.html</a></li>
-    <li><a href="k_8_s_coffee_shop_analogy_4_column_html.html">k_8_s_coffee_shop_analogy_4_column_html.html</a></li>
-    <li><a href="Multi-Site App Pool vs Multi-Container Pod.html">Multi-Site App Pool vs Multi-Container Pod.html</a></li>
-  </ul>
+<header>
+  <div class="wrap">
+    <h1>ShareWithFriends</h1>
+    <div class="muted">Auto-generated index of your pages</div>
+  </div>
+</header>
+
+<div class="hero">
+  <div class="card">
+    <h2 style="margin:0 0 10px 0;">Available Files</h2>
+    <ul class="list">      <li class="item"><span class="badge">F</span><span class="name"><a href="0001.html">0001.html</a></span><span class="small">0001.html</span></li>
+      <li class="item"><span class="badge">F</span><span class="name"><a href="application lifecycle comparison table.htm">application lifecycle comparison table.htm</a></span><span class="small">application lifecycle comparison table.htm</span></li>
+      <li class="item"><span class="badge">F</span><span class="name"><a href="cluster-node-pod-container.htm">cluster-node-pod-container.htm</a></span><span class="small">cluster-node-pod-container.htm</span></li>
+      <li class="item"><span class="badge">F</span><span class="name"><a href="devops_syllabus_docker_k8s.html">devops_syllabus_docker_k8s.html</a></span><span class="small">devops_syllabus_docker_k8s.html</span></li>
+      <li class="item"><span class="badge">F</span><span class="name"><a href="docker_phases.htm">docker_phases.htm</a></span><span class="small">docker_phases.htm</span></li>
+      <li class="item"><span class="badge">F</span><span class="name"><a href="funny_html_5_banana_party_🍌.html">funny_html_5_banana_party_🍌.html</a></span><span class="small">funny_html_5_banana_party_🍌.html</span></li>
+      <li class="item"><span class="badge">F</span><span class="name"><a href="Kubernetes flow ASCII diagram.htm">Kubernetes flow ASCII diagram.htm</a></span><span class="small">Kubernetes flow ASCII diagram.htm</span></li>
+      <li class="item"><span class="badge">F</span><span class="name"><a href="kubernetes_lemonade_analogy_table.html">kubernetes_lemonade_analogy_table.html</a></span><span class="small">kubernetes_lemonade_analogy_table.html</span></li>
+      <li class="item"><span class="badge">F</span><span class="name"><a href="k_8_s_ascii_full_diagram.html">k_8_s_ascii_full_diagram.html</a></span><span class="small">k_8_s_ascii_full_diagram.html</span></li>
+      <li class="item"><span class="badge">F</span><span class="name"><a href="k_8_s_coffee_shop_analogy_4_column_html.html">k_8_s_coffee_shop_analogy_4_column_html.html</a></span><span class="small">k_8_s_coffee_shop_analogy_4_column_html.html</span></li>
+      <li class="item"><span class="badge">F</span><span class="name"><a href="Multi-Site App Pool vs Multi-Container Pod.html">Multi-Site App Pool vs Multi-Container Pod.html</a></span><span class="small">Multi-Site App Pool vs Multi-Container Pod.html</span></li>
+    </ul>
+    <div class="small" style="margin-top:12px;">Total: 11 file(s)</div>
+  </div>
+
+  <div>
+    <div class="avatar card" aria-label="professional avatar illustration">
+      <!-- Professional, tasteful avatar (business attire) -->
+      <svg viewBox="0 0 240 300" width="90%" role="img" aria-label="professional person illustration">
+        <defs>
+          <linearGradient id="skin" x1="0" x2="1" y1="0" y2="1">
+            <stop offset="0" stop-color="#f6d6c1"/><stop offset="1" stop-color="#e7bda3"/>
+          </linearGradient>
+          <linearGradient id="accent" x1="0" x2="1" y1="0" y2="1">
+            <stop offset="0" stop-color="#7c6cff"/><stop offset="1" stop-color="#ff5db1"/>
+          </linearGradient>
+          <filter id="soft"><feGaussianBlur stdDeviation="1.4"/></filter>
+        </defs>
+
+        <!-- hair (blonde tone) -->
+        <path d="M120,46c28,0,44,18,48,36 4,18-4,40-4,40l-12-6-8-16-20,6-20-6-8,16-12,6c0,0-8-22-4-40 4-18,20-36,40-36z"
+              fill="#f3d06b" filter="url(#soft)"/>
+
+        <!-- head -->
+        <circle cx="120" cy="70" r="20" fill="url(#skin)" />
+
+        <!-- neck -->
+        <rect x="112" y="88" width="16" height="16" rx="8" fill="url(#skin)"/>
+
+        <!-- blazer (navy) -->
+        <path d="M72,120 h96 v64 c0,12-10,22-22,22 h-52 c-12,0-22-10-22-22z"
+              fill="#27324a"/>
+        <!-- lapels -->
+        <path d="M90,120 l30,40 l-22,0 l-18,-34 z" fill="#1e2740"/>
+        <path d="M150,120 l-30,40 l22,0 l18,-34 z" fill="#1e2740"/>
+
+        <!-- blouse -->
+        <rect x="102" y="120" width="36" height="28" rx="6" fill="#ffffff" opacity="0.9"/>
+
+        <!-- skirt (knee length, professional) -->
+        <path d="M84,184 h72 l8,38 h-88z" fill="url(#accent)" opacity="0.9"/>
+
+        <!-- legs (tights) -->
+        <rect x="104" y="222" width="10" height="48" rx="5" fill="#d7c6e9"/>
+        <rect x="126" y="222" width="10" height="48" rx="5" fill="#d7c6e9"/>
+
+        <!-- shoes -->
+        <ellipse cx="109" cy="272" rx="12" ry="5" fill="#7c6cff"/>
+        <ellipse cx="131" cy="272" rx="12" ry="5" fill="#7c6cff"/>
+      </svg>
+    </div>
+    <div class="note">Friendly, professional avatar for presentation aesthetics.</div>
+  </div>
+</div>
+
 </body>
 </html>
