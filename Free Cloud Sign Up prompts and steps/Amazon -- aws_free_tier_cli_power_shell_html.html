@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>AWS Free Tier Signup & CLI Setup (PowerShell Edition)</title>
+  <style>
+    :root { --bg:#0b1020; --card:#121836; --ink:#e6ecff; --muted:#9fb0ff; --accent:#7aa2ff; --ok:#3ddc97; --warn:#ffd166; }
+    *{box-sizing:border-box}
+    body{margin:0; font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji"; color:var(--ink); background:linear-gradient(180deg,#0b1020,#0e1530 40%,#0b1020 100%)}
+    .wrap{max-width:960px; margin:48px auto; padding:0 20px}
+    .card{background:var(--card); border:1px solid rgba(255,255,255,.08); border-radius:16px; padding:24px; box-shadow:0 10px 30px rgba(0,0,0,.35)}
+    h1{font-size:clamp(24px,3.6vw,36px); margin:0 0 12px}
+    h2{font-size:clamp(18px,2.4vw,24px); margin:28px 0 12px}
+    h3{font-size:clamp(16px,2vw,20px); margin:20px 0 8px}
+    p, li{line-height:1.6}
+    a{color:var(--accent); text-decoration:none}
+    a:hover{text-decoration:underline}
+    .muted{color:var(--muted)}
+    .hr{height:1px; background:linear-gradient(90deg,transparent,rgba(255,255,255,.14),transparent); margin:24px 0}
+
+    .blockquote{position:relative; padding:16px 16px 16px 18px; background:#0f1735; border:1px solid rgba(255,255,255,.08); border-radius:12px}
+    .blockquote::before{content:"“"; position:absolute; left:8px; top:-8px; font-size:42px; color:var(--muted); opacity:.35}
+
+    .steplist{counter-reset: step}
+    .steplist li{list-style:none; margin:10px 0; padding-left:42px; position:relative}
+    .steplist li::before{counter-increment: step; content: counter(step); position:absolute; left:0; top:0; width:28px; height:28px; display:grid; place-items:center; border-radius:10px; background:#0d1a42; border:1px solid rgba(255,255,255,.1); color:var(--ink); font-weight:600}
+
+    .code{position:relative; background:#0a122b; border:1px solid rgba(255,255,255,.08); border-radius:12px; padding:14px; margin:12px 0}
+    pre{margin:0; overflow:auto; white-space:pre-wrap}
+    code{font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace; font-size:13.5px}
+    .copy{position:absolute; right:10px; top:10px; border:1px solid rgba(255,255,255,.12); background:#0e1a39; color:var(--ink); border-radius:8px; padding:6px 10px; cursor:pointer}
+    .copy:active{transform:translateY(1px)}
+
+    .hint{display:flex; gap:10px; align-items:flex-start; padding:12px 14px; background:#11204a; border:1px dashed rgba(255,255,255,.18); border-radius:12px; margin:12px 0}
+    .pill{display:inline-block; padding:2px 8px; border-radius:999px; border:1px solid rgba(255,255,255,.14); background:#0d1a42; color:var(--muted); font-size:12px}
+
+    .toc{display:grid; grid-template-columns:1fr; gap:10px; margin:14px 0 6px}
+    .toc a{display:block; padding:10px 12px; border:1px solid rgba(255,255,255,.08); background:#0f1735; border-radius:10px}
+    footer{margin-top:28px; font-size:13px}
+  </style>
+  <script>
+    function copyCode(id) {
+      const el = document.getElementById(id);
+      if (!el) return;
+      const txt = el.innerText || el.textContent;
+      navigator.clipboard.writeText(txt).then(()=>{
+        const btn = document.querySelector(`[data-for='${id}']`);
+        if(btn){ const prev = btn.textContent; btn.textContent = 'Copied'; setTimeout(()=>btn.textContent = prev, 1200); }
+      });
+    }
+  </script>
+</head>
+<body>
+  <main class="wrap">
+    <header class="card">
+      <h1>AWS Free Tier Signup &amp; CLI Setup <span class="muted">(PowerShell Edition)</span></h1>
+      <p class="muted">A concise, battle-tested checklist with the exact PowerShell commands and the same hurdles we hit (Lightsail access, credits, Notepad for secret keys).</p>
+
+      <h2>Reusable Prompt</h2>
+      <div class="blockquote" id="prompt">
+        <p><strong>Prompt:</strong> Make me a step-by-step guide for signing up for an AWS Free Tier account, checking credits, and setting up AWS CLI access in PowerShell. Include common hurdles like Lightsail requiring a paid plan and needing to use Notepad to copy access keys. Add the exact PowerShell commands for CLI setup.</p>
+      </div>
+
+      <div class="hr"></div>
+
+      <h3>Quick TOC</h3>
+      <nav class="toc">
+        <a href="#signup">1) Create an AWS Free Account</a>
+        <a href="#credits">2) Confirm Your Credits</a>
+        <a href="#cli">3) Set Up AWS CLI in PowerShell</a>
+        <a href="#summary">Summary</a>
+      </nav>
+    </header>
+
+    <section class="card" id="signup">
+      <h2>1) Create an AWS Free Account</h2>
+      <ol class="steplist">
+        <li>Go to <a href="https://aws.amazon.com/free" target="_blank" rel="noopener">aws.amazon.com/free</a>.</li>
+        <li>Click <strong>Create a Free Account</strong> and complete email, account name, and password.</li>
+        <li>Provide contact details (name, phone, address).</li>
+        <li>Add a payment method (card is required for verification even with free credits).</li>
+        <li>Verify identity via phone/SMS code.</li>
+        <li>Select the <strong>Free Tier</strong> to start.</li>
+      </ol>
+
+      <div class="hint"><span class="pill">Heads‑up</span> If you don’t see services like <strong>Lightsail</strong>, upgrade from the basic free account plan to a paid plan. <em>Your credits stay on the account</em>; upgrading doesn’t erase them.</div>
+      <div class="hint"><span class="pill">Note</span> Credits only vanish if they <em>expire</em> or are <em>service‑scoped</em> and you’re on a service they don’t cover.</div>
+    </section>
+
+    <section class="card" id="credits">
+      <h2>2) Confirm Your Credits</h2>
+      <ol class="steplist">
+        <li>Open the <a href="https://console.aws.amazon.com/billing/home" target="_blank" rel="noopener">Billing Dashboard</a>.</li>
+        <li>In the left menu, click <strong>Credits</strong>.</li>
+        <li>Check your <em>remaining balance</em>, <em>expiration date</em>, and <em>eligible services</em>.</li>
+      </ol>
+      <div class="hint"><span class="pill">How it pays</span> When you launch Lightsail, charges are deducted from your <strong>credit</strong> first. Your card is only used after credits are exhausted or if a service isn’t covered.</div>
+    </section>
+
+    <section class="card" id="cli">
+      <h2>3) Set Up AWS CLI in PowerShell</h2>
+
+      <h3>Install the AWS CLI</h3>
+      <p>Download AWS CLI v2 for Windows from the <a href="https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html" target="_blank" rel="noopener">official docs</a>, then verify:</p>
+      <div class="code">
+        <button class="copy" data-for="c1" onclick="copyCode('c1')">Copy</button>
+        <pre id="c1"><code>aws --version</code></pre>
+      </div>
+
+      <h3>Create Access Keys</h3>
+      <ol class="steplist">
+        <li>In the AWS Console, open <strong>IAM</strong> (Identity and Access Management).</li>
+        <li>Create a new <strong>User</strong> (for initial setup you can attach <code>AdministratorAccess</code>, then tighten later).</li>
+        <li>Under <strong>Security credentials</strong>, generate an <strong>Access Key ID</strong> and <strong>Secret Access Key</strong>.</li>
+        <li><strong>Important:</strong> AWS only shows the Secret once — paste it into <strong>Notepad</strong> immediately and store it safely.</li>
+      </ol>
+
+      <h3>Configure the CLI</h3>
+      <div class="code">
+        <button class="copy" data-for="c2" onclick="copyCode('c2')">Copy</button>
+        <pre id="c2"><code>aws configure
+# Enter the following when prompted:
+# AWS Access Key ID: &lt;your key id&gt;
+# AWS Secret Access Key: &lt;your secret&gt;
+# Default region name: us-east-1
+# Default output format: json</code></pre>
+      </div>
+
+      <h3>Smoke Test</h3>
+      <div class="code">
+        <button class="copy" data-for="c3" onclick="copyCode('c3')">Copy</button>
+        <pre id="c3"><code>aws s3 ls</code></pre>
+      </div>
+      <p class="muted">If you have no buckets yet, it may return nothing — that’s fine. This confirms your credentials and region are valid.</p>
+
+      <h3>Useful Follow‑ups</h3>
+      <div class="code">
+        <button class="copy" data-for="c4" onclick="copyCode('c4')">Copy</button>
+        <pre id="c4"><code># Show current CLI config values
+aws configure list
+
+# Verify that PowerShell can find the CLI binary
+Get-Command aws | Format-List *</code></pre>
+      </div>
+
+      <div class="hint"><span class="pill">Security Tip</span> Don’t commit keys to Git. Prefer a password manager. Rotate keys periodically, and use least‑privilege IAM policies for real projects.</div>
+    </section>
+
+    <section class="card" id="summary">
+      <h2>Summary</h2>
+      <ul>
+        <li>Create Free Tier account → identity + payment verification.</li>
+        <li>Upgrade if you need Lightsail access — <em>credits remain</em>.</li>
+        <li>Check credits in <strong>Billing → Credits</strong>.</li>
+        <li>Install and configure AWS CLI via PowerShell; keep your keys safe.</li>
+        <li>Use the prompt at the top to regenerate or refresh this guide anytime.</li>
+      </ul>
+    </section>
+
+    <footer class="muted wrap">
+      <p>Made for Parm • Last updated: <script>document.write(new Date().toLocaleDateString())</script></p>
+    </footer>
+  </main>
+</body>
+</html>
