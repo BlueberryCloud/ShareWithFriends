@@ -1,12 +1,21 @@
-# generate-index.ps1 — pretty index (PowerShell-safe heredocs)
+# generate-index.ps1 — pretty index grouped by folders (PowerShell-safe heredocs)
 
 # 1) Set your repo path (or replace with: $root = (Get-Location).Path )
 $root = "C:\Users\parm19\source\repos-share\sharewithfriends"
 $indexPath = Join-Path $root "index.html"
 
 # 2) Collect .html/.htm files (skip index.html)
-$files = Get-ChildItem -Path $root -Recurse -File |
-  Where-Object { $_.Extension -match '^\.(html|htm)$' -and $_.Name -notmatch '^index\.html?$' }
+$files = Get-ChildItem -Path $root -Recurse -File -Include *.html,*.htm |
+  Where-Object { $_.Name -notmatch '^index\.html?$' }
+
+# Group by relative directory ('' => '/')
+$groups = $files |
+  Group-Object {
+    ($_.DirectoryName.Substring($root.Length).TrimStart('\','/') -replace '\\','/')
+  } |
+  Sort-Object Name
+
+[int]$total = $files.Count
 
 # 3) Start HTML
 $html = @"
@@ -58,6 +67,15 @@ $html = @"
   a:hover{color:#fff; border-bottom-color:rgba(255,93,177,.75)}
   .small{color:var(--muted); font-size:12px}
 
+  details.folder{margin:10px 0; border:1px solid rgba(124,108,255,.22); border-radius:12px; padding:12px; background:linear-gradient(180deg, rgba(255,255,255,.02), rgba(255,255,255,0))}
+  details.folder[open]{border-color:rgba(255,93,177,.45)}
+  summary{list-style:none; cursor:pointer; display:flex; align-items:center; gap:10px}
+  summary::-webkit-details-marker{display:none}
+  .folder-name{font-weight:700}
+  .folder-meta{margin-left:auto; font-size:12px; color:var(--muted)}
+  .folder-badge{min-width:26px;height:26px;border-radius:8px;display:inline-flex;align-items:center;justify-content:center;
+    font-size:12px;font-weight:800;color:#fff;background:linear-gradient(135deg,#4ecdc4,#45b7ff); box-shadow:0 6px 16px rgba(69,183,255,.35)}
+  .folder-list{margin:10px 0 0 0; padding-left:0}
   .avatar{
     aspect-ratio: 1/1; width:100%;
     border:1px solid rgba(124,108,255,.2); border-radius:16px;
@@ -73,27 +91,45 @@ $html = @"
 <header>
   <div class="wrap">
     <h1>ShareWithFriends</h1>
-    <div class="muted">Auto-generated index of your pages</div>
+    <div class="muted">Auto-generated index of your pages (grouped by folders)</div>
   </div>
 </header>
 
 <div class="hero">
   <div class="card">
-    <h2 style="margin:0 0 10px 0;">Available Files</h2>
-    <ul class="list">
+    <h2 style="margin:0 0 10px 0;">Available Files by Folder</h2>
+    <div class="small" style="margin:0 0 8px 0;">Total: $total file(s)</div>
 "@
 
-# 4) Add each file as a list item
-foreach ($f in $files) {
-  $rel = $f.FullName.Substring($root.Length).TrimStart('\','/') -replace '\\','/'
-  $name = $f.Name
-  $html += "      <li class=""item""><span class=""badge"">F</span><span class=""name""><a href=""$rel"">$name</a></span><span class=""small"">$rel</span></li>`n"
+# 4) Add each folder group with its files
+foreach ($g in $groups) {
+  $folder = if ([string]::IsNullOrWhiteSpace($g.Name)) { "/" } else { "/$($g.Name.TrimStart('/'))" }
+  $count = $g.Group.Count
+
+  $html += @"
+    <details class="folder">
+      <summary>
+        <span class="folder-badge">D</span>
+        <span class="folder-name">$folder</span>
+        <span class="folder-meta">$count file(s)</span>
+      </summary>
+      <ul class="list folder-list">
+"@
+
+  foreach ($f in ($g.Group | Sort-Object Name)) {
+    $rel  = $f.FullName.Substring($root.Length).TrimStart('\','/') -replace '\\','/'
+    $name = $f.Name
+    $html += "        <li class=""item""><span class=""badge"">F</span><span class=""name""><a href=""$rel"">$name</a></span><span class=""small"">$rel</span></li>`n"
+  }
+
+  $html += @"
+      </ul>
+    </details>
+"@
 }
 
-# 5) Close HTML with a tasteful professional avatar SVG
+# 5) Close HTML with avatar block
 $html += @"
-    </ul>
-    <div class="small" style="margin-top:12px;">Total: $($files.Count) file(s)</div>
   </div>
 
   <div>
@@ -121,8 +157,7 @@ $html += @"
         <rect x="112" y="88" width="16" height="16" rx="8" fill="url(#skin)"/>
 
         <!-- blazer (navy) -->
-        <path d="M72,120 h96 v64 c0,12-10,22-22,22 h-52 c-12,0-22-10-22-22z"
-              fill="#27324a"/>
+        <path d="M72,120 h96 v64 c0,12-10,22-22,22 h-52 c-12,0-22-10-22-22z" fill="#27324a"/>
         <!-- lapels -->
         <path d="M90,120 l30,40 l-22,0 l-18,-34 z" fill="#1e2740"/>
         <path d="M150,120 l-30,40 l22,0 l18,-34 z" fill="#1e2740"/>
@@ -152,4 +187,4 @@ $html += @"
 
 # 6) Write file
 Set-Content -Path $indexPath -Value $html -Encoding UTF8
-Write-Host "index.html generated at $indexPath (listed $($files.Count) file(s))."
+Write-Host "index.html generated at $indexPath (listed $total file(s))."

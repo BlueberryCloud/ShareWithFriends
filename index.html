@@ -46,6 +46,15 @@
   a:hover{color:#fff; border-bottom-color:rgba(255,93,177,.75)}
   .small{color:var(--muted); font-size:12px}
 
+  details.folder{margin:10px 0; border:1px solid rgba(124,108,255,.22); border-radius:12px; padding:12px; background:linear-gradient(180deg, rgba(255,255,255,.02), rgba(255,255,255,0))}
+  details.folder[open]{border-color:rgba(255,93,177,.45)}
+  summary{list-style:none; cursor:pointer; display:flex; align-items:center; gap:10px}
+  summary::-webkit-details-marker{display:none}
+  .folder-name{font-weight:700}
+  .folder-meta{margin-left:auto; font-size:12px; color:var(--muted)}
+  .folder-badge{min-width:26px;height:26px;border-radius:8px;display:inline-flex;align-items:center;justify-content:center;
+    font-size:12px;font-weight:800;color:#fff;background:linear-gradient(135deg,#4ecdc4,#45b7ff); box-shadow:0 6px 16px rgba(69,183,255,.35)}
+  .folder-list{margin:10px 0 0 0; padding-left:0}
   .avatar{
     aspect-ratio: 1/1; width:100%;
     border:1px solid rgba(124,108,255,.2); border-radius:16px;
@@ -61,28 +70,48 @@
 <header>
   <div class="wrap">
     <h1>ShareWithFriends</h1>
-    <div class="muted">Auto-generated index of your pages</div>
+    <div class="muted">Auto-generated index of your pages (grouped by folders)</div>
   </div>
 </header>
 
 <div class="hero">
   <div class="card">
-    <h2 style="margin:0 0 10px 0;">Available Files</h2>
-    <ul class="list">      <li class="item"><span class="badge">F</span><span class="name"><a href="0001.html">0001.html</a></span><span class="small">0001.html</span></li>
-      <li class="item"><span class="badge">F</span><span class="name"><a href="application lifecycle comparison table.htm">application lifecycle comparison table.htm</a></span><span class="small">application lifecycle comparison table.htm</span></li>
-      <li class="item"><span class="badge">F</span><span class="name"><a href="cluster-node-pod-container.htm">cluster-node-pod-container.htm</a></span><span class="small">cluster-node-pod-container.htm</span></li>
-      <li class="item"><span class="badge">F</span><span class="name"><a href="devops_syllabus_docker_k8s.html">devops_syllabus_docker_k8s.html</a></span><span class="small">devops_syllabus_docker_k8s.html</span></li>
-      <li class="item"><span class="badge">F</span><span class="name"><a href="docker_phases.htm">docker_phases.htm</a></span><span class="small">docker_phases.htm</span></li>
-      <li class="item"><span class="badge">F</span><span class="name"><a href="funny_html_5_banana_party_🍌.html">funny_html_5_banana_party_🍌.html</a></span><span class="small">funny_html_5_banana_party_🍌.html</span></li>
-      <li class="item"><span class="badge">F</span><span class="name"><a href="k_8_s_ascii_full_diagram.html">k_8_s_ascii_full_diagram.html</a></span><span class="small">k_8_s_ascii_full_diagram.html</span></li>
-      <li class="item"><span class="badge">F</span><span class="name"><a href="k_8_s_coffee_shop_analogy_4_column_html.html">k_8_s_coffee_shop_analogy_4_column_html.html</a></span><span class="small">k_8_s_coffee_shop_analogy_4_column_html.html</span></li>
-      <li class="item"><span class="badge">F</span><span class="name"><a href="Kubernetes flow ASCII diagram.htm">Kubernetes flow ASCII diagram.htm</a></span><span class="small">Kubernetes flow ASCII diagram.htm</span></li>
-      <li class="item"><span class="badge">F</span><span class="name"><a href="kubernetes_lemonade_analogy_table.html">kubernetes_lemonade_analogy_table.html</a></span><span class="small">kubernetes_lemonade_analogy_table.html</span></li>
-      <li class="item"><span class="badge">F</span><span class="name"><a href="Multi-Site App Pool vs Multi-Container Pod.html">Multi-Site App Pool vs Multi-Container Pod.html</a></span><span class="small">Multi-Site App Pool vs Multi-Container Pod.html</span></li>
-      <li class="item"><span class="badge">F</span><span class="name"><a href="Free Cloud Sign Up prompts and steps/Amazon -- aws_free_tier_cli_power_shell_html.html">Amazon -- aws_free_tier_cli_power_shell_html.html</a></span><span class="small">Free Cloud Sign Up prompts and steps/Amazon -- aws_free_tier_cli_power_shell_html.html</span></li>
-    </ul>
-    <div class="small" style="margin-top:12px;">Total: 12 file(s)</div>
-  </div>
+    <h2 style="margin:0 0 10px 0;">Available Files by Folder</h2>
+    <div class="small" style="margin:0 0 8px 0;">Total: 13 file(s)</div>    <details class="folder">
+      <summary>
+        <span class="folder-badge">D</span>
+        <span class="folder-name">/</span>
+        <span class="folder-meta">11 file(s)</span>
+      </summary>
+      <ul class="list folder-list">        <li class="item"><span class="badge">F</span><span class="name"><a href="0001.html">0001.html</a></span><span class="small">0001.html</span></li>
+        <li class="item"><span class="badge">F</span><span class="name"><a href="application lifecycle comparison table.htm">application lifecycle comparison table.htm</a></span><span class="small">application lifecycle comparison table.htm</span></li>
+        <li class="item"><span class="badge">F</span><span class="name"><a href="cluster-node-pod-container.htm">cluster-node-pod-container.htm</a></span><span class="small">cluster-node-pod-container.htm</span></li>
+        <li class="item"><span class="badge">F</span><span class="name"><a href="devops_syllabus_docker_k8s.html">devops_syllabus_docker_k8s.html</a></span><span class="small">devops_syllabus_docker_k8s.html</span></li>
+        <li class="item"><span class="badge">F</span><span class="name"><a href="docker_phases.htm">docker_phases.htm</a></span><span class="small">docker_phases.htm</span></li>
+        <li class="item"><span class="badge">F</span><span class="name"><a href="funny_html_5_banana_party_🍌.html">funny_html_5_banana_party_🍌.html</a></span><span class="small">funny_html_5_banana_party_🍌.html</span></li>
+        <li class="item"><span class="badge">F</span><span class="name"><a href="k_8_s_ascii_full_diagram.html">k_8_s_ascii_full_diagram.html</a></span><span class="small">k_8_s_ascii_full_diagram.html</span></li>
+        <li class="item"><span class="badge">F</span><span class="name"><a href="k_8_s_coffee_shop_analogy_4_column_html.html">k_8_s_coffee_shop_analogy_4_column_html.html</a></span><span class="small">k_8_s_coffee_shop_analogy_4_column_html.html</span></li>
+        <li class="item"><span class="badge">F</span><span class="name"><a href="Kubernetes flow ASCII diagram.htm">Kubernetes flow ASCII diagram.htm</a></span><span class="small">Kubernetes flow ASCII diagram.htm</span></li>
+        <li class="item"><span class="badge">F</span><span class="name"><a href="kubernetes_lemonade_analogy_table.html">kubernetes_lemonade_analogy_table.html</a></span><span class="small">kubernetes_lemonade_analogy_table.html</span></li>
+        <li class="item"><span class="badge">F</span><span class="name"><a href="Multi-Site App Pool vs Multi-Container Pod.html">Multi-Site App Pool vs Multi-Container Pod.html</a></span><span class="small">Multi-Site App Pool vs Multi-Container Pod.html</span></li>
+      </ul>
+    </details>    <details class="folder">
+      <summary>
+        <span class="folder-badge">D</span>
+        <span class="folder-name">/EachClassPhases1-7</span>
+        <span class="folder-meta">1 file(s)</span>
+      </summary>
+      <ul class="list folder-list">        <li class="item"><span class="badge">F</span><span class="name"><a href="EachClassPhases1-7/phase_1_docker_fundamentals.html">phase_1_docker_fundamentals.html</a></span><span class="small">EachClassPhases1-7/phase_1_docker_fundamentals.html</span></li>
+      </ul>
+    </details>    <details class="folder">
+      <summary>
+        <span class="folder-badge">D</span>
+        <span class="folder-name">/Free Cloud Sign Up prompts and steps</span>
+        <span class="folder-meta">1 file(s)</span>
+      </summary>
+      <ul class="list folder-list">        <li class="item"><span class="badge">F</span><span class="name"><a href="Free Cloud Sign Up prompts and steps/Amazon -- aws_free_tier_cli_power_shell_html.html">Amazon -- aws_free_tier_cli_power_shell_html.html</a></span><span class="small">Free Cloud Sign Up prompts and steps/Amazon -- aws_free_tier_cli_power_shell_html.html</span></li>
+      </ul>
+    </details>  </div>
 
   <div>
     <div class="avatar card" aria-label="professional avatar illustration">
@@ -109,8 +138,7 @@
         <rect x="112" y="88" width="16" height="16" rx="8" fill="url(#skin)"/>
 
         <!-- blazer (navy) -->
-        <path d="M72,120 h96 v64 c0,12-10,22-22,22 h-52 c-12,0-22-10-22-22z"
-              fill="#27324a"/>
+        <path d="M72,120 h96 v64 c0,12-10,22-22,22 h-52 c-12,0-22-10-22-22z" fill="#27324a"/>
         <!-- lapels -->
         <path d="M90,120 l30,40 l-22,0 l-18,-34 z" fill="#1e2740"/>
         <path d="M150,120 l-30,40 l22,0 l18,-34 z" fill="#1e2740"/>

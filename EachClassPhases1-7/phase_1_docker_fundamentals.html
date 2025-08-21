@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Phase 1 — Docker Fundamentals</title>
+<style>
+  :root {
+    --bg: #0b0f14;
+    --card: #111827;
+    --muted: #9ca3af;
+    --text: #e5e7eb;
+    --accent: #38bdf8;
+    --border: #1f2937;
+  }
+  body { margin: 0; font-family: system-ui, sans-serif; background: var(--bg); color: var(--text); line-height: 1.55; }
+  .wrap { max-width: 950px; margin: 0 auto; padding: 32px 20px; }
+  h1 { font-size: 1.8rem; margin: 0 0 8px; }
+  .sub { color: var(--muted); margin-bottom: 28px; }
+  .card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 20px; }
+  h2 { font-size: 1.3rem; margin-top: 0; }
+  pre, code { background: #0a0f15; border: 1px solid var(--border); border-radius: 10px; }
+  code { padding: 2px 6px; }
+  pre { padding: 12px; overflow-x: auto; }
+  ul { margin: 6px 0 0 20px; }
+  .talkout { border-left: 3px solid var(--accent); padding-left: 10px; margin: 6px 0; background: #0a0f15; border-radius: 8px; color: var(--accent); font-weight: 500; }
+  .talkout::before { content: "🗣️ "; }
+  .small { font-size: .9rem; }
+  .prompt-box { background: #111827; border: 1px solid var(--border); border-radius: 12px; padding: 16px; margin-bottom: 24px; }
+  .prompt-box h2 { margin-top: 0; font-size: 1.1rem; color: var(--accent); }
+  .prompt-text { background: #0a0f15; border: 1px solid var(--border); border-radius: 8px; padding: 12px; white-space: pre-line; font-family: monospace; }
+  .announce-note { background: #1f2937; border-left: 4px solid var(--accent); padding: 12px; margin: 20px 0; border-radius: 8px; color: var(--muted); font-size: .95rem; }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>Phase 1 — Docker Fundamentals</h1>
+    <div class="sub small">Single‑section doc with Tasks, Commands, and Talk‑it‑Out explanations.<br>
+    Generated on 2025-08-21 10:54</div>
+
+    <div class="prompt-box">
+      <h2>Prompt Used to Generate This Document</h2>
+      <div class="prompt-text">okay lets fix column one and turn into single document only for phase 1 docker fundamentals
+lets list tasks.
+then relist tasks, and comands, but also include talk out loud for each so a person knows that they ca communicate what they learn
+make it clear they need to announce things aloud at work</div>
+    </div>
+
+    <div class="announce-note">
+      🔊 <strong>Reminder:</strong> At work, don’t just run the commands — <em>announce them out loud</em>. Explaining what you’re doing shows you understand the concepts and builds trust with your team.
+    </div>
+
+    <div class="card">
+      <h2>Tasks / Concepts</h2>
+      <ul>
+        <li>Install Docker Desktop</li>
+        <li>Run containers with port binding</li>
+        <li>Inspect containers, view logs</li>
+        <li>Use volumes and environment variables</li>
+        <li>Compose basics</li>
+        <li>Create a simple static site (HTML page + image)</li>
+        <li>Serve the site via NGINX container</li>
+      </ul>
+    </div>
+
+    <br>
+
+    <div class="card">
+      <h2>Commands + Talk it Out</h2>
+
+      <h3>Install Docker Desktop</h3>
+      <pre><code>docker --version</code></pre>
+      <div class="talkout">I installed Docker Desktop and verified it’s installed by checking the version.</div>
+
+      <h3>Run containers with port binding</h3>
+      <pre><code>docker run -d -p 8080:80 nginx</code></pre>
+      <div class="talkout">I started an NGINX container in the background, mapping local port 8080 to the container’s port 80 so I can browse to http://localhost:8080.</div>
+
+      <h3>Inspect containers, view logs</h3>
+      <pre><code>docker ps
+docker inspect &lt;container&gt;
+docker logs &lt;container&gt;</code></pre>
+      <div class="talkout">I listed running containers, inspected one for details, and checked logs to confirm activity.</div>
+
+      <h3>Use volumes (mount local files)</h3>
+      <pre><code># Windows PowerShell
+docker run -v %CD%/site:/usr/share/nginx/html:ro -p 8080:80 nginx
+
+# macOS/Linux
+docker run -v $(pwd)/site:/usr/share/nginx/html:ro -p 8080:80 nginx</code></pre>
+      <div class="talkout">I mounted my local site folder into the container so edits show up live. I used %CD% on Windows or $(pwd) on Linux/Mac.</div>
+
+      <h3>Compose basics</h3>
+      <pre><code>docker compose up -d</code></pre>
+      <div class="talkout">I brought up services defined in a compose file so they start together in detached mode.</div>
+
+      <h3>Create a static site with image</h3>
+      <pre><code>mkdir site
+echo "&lt;h1&gt;Hello&lt;/h1&gt;&lt;img src='cat.png' /&gt;" &gt; site/index.html
+# Place cat.png inside site/</code></pre>
+      <div class="talkout">I built a tiny HTML page and added an image, then served that folder via NGINX.</div>
+
+      <h3>Optional Dockerfile build</h3>
+      <pre><code>printf "FROM nginx:alpine\\nCOPY site /usr/share/nginx/html" &gt; Dockerfile
+docker build -t mysite .
+docker run -d -p 8080:80 mysite</code></pre>
+      <div class="talkout">Instead of mounting, I baked my static site into an image and ran it as its own container.</div>
+
+    </div>
+
+    <p class="small muted">Tip: On Windows use <code>%CD%</code> for current directory; on macOS/Linux use <code>$(pwd)</code>.</p>
+  </div>
+</body>
+</html>
