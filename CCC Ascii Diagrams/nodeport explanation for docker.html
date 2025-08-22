@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Docker Port Binding Diagram</title>
+  <style>
+    body {
+      background: #0f1020;
+      color: #e9e9ff;
+      font-family: monospace;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      margin: 0;
+      padding: 20px;
+    }
+    pre {
+      background: #17182b;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.6);
+      overflow-x: auto;
+      line-height: 1.4em;
+    }
+    h1 {
+      text-align: center;
+      font-family: system-ui, sans-serif;
+      margin-bottom: 20px;
+      color: #a5a7d4;
+    }
+  </style>
+</head>
+<body>
+  <div>
+    <h1>Docker Port Binding (8080 → 80)</h1>
+    <pre>
++---------------------------------------------------+
+|                 Host Machine                      |
+|   (your laptop / server OS)                       |
+|                                                   |
+|   Browser: http://localhost:8080                  |
+|        |                                          |
+|        v                                          |
+|   [ Listens on host:8080 ]                        |
+|        |                                          |
+|        v                                          |
+|   +---------------- Docker Engine ---------------+|
+|   |                                               |
+|   |   Port Mapping: 8080 (host) ---> 80 (container)|
+|   |                                               |
+|   |   +---------------- Container -------------+  |
+|   |   |      Nginx Service                      | |
+|   |   |      (listens on port 80 inside)        | |
+|   |   +----------------------------------------+  |
+|   |                                               |
+|   +-----------------------------------------------+|
+|                                                   |
++---------------------------------------------------+
+    </pre>
+  </div>
+</body>
+</html>
