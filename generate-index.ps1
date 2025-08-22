@@ -111,19 +111,27 @@ foreach ($g in $groups) {
 '@ -f $folder, $count
 
   foreach ($entry in $g.Group) {
-    # Each $entry has a .File (the original FileInfo)
     $file = $entry.File
     if (-not $file) { continue }
 
     $relFile = Get-RepoRelativePath -FullPath $file.FullName -Root $Root
     if ([string]::IsNullOrWhiteSpace($relFile)) { continue }
 
-    $href = [System.Uri]::EscapeUriString($relFile)
     $name = $file.Name
 
+    # JSON behavior:
+    # - Cloud (default): link to viewer with ?src=<encoded relative path>
+    # - LocalFileMode: link to viewer only (viewer should let user pick file)
     if ($file.Extension -match '^\.(json)$') {
-      if ($LocalFileMode) { $href = $Viewer }
-      else { $href = "$Viewer?src=$href" }
+      if ($LocalFileMode) {
+        $href = $Viewer
+      } else {
+        # Safer for query params than EscapeUriString
+        $href = "$Viewer?src=$([System.Uri]::EscapeDataString($relFile))"
+      }
+    } else {
+      # Non-JSON direct link
+      $href = [System.Uri]::EscapeUriString($relFile)
     }
 
     $html += @'
