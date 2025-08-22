@@ -1,56 +1,42 @@
-# generate-index.ps1 — Web-safe index with relative links (HTML/JSON)
 param(
-  [string]$Root = (Get-Location).Path,
-  [string]$Output = "index.html"
+  [switch]$LocalFileMode,  # if set, JSON links won't include ?src=
+  [string]$Root   = "C:\Users\parm19\source\repos-share\sharewithfriends",
+  [string]$Viewer = "json-viewer.html"
 )
 
-$ErrorActionPreference = "Stop"
-$indexPath = Join-Path $Root $Output
+$indexPath = Join-Path $Root "index.html"
 
-# 1) Collect files (recursive), skip index.html itself
+function Get-RepoRelativePath {
+  param([string]$FullPath, [string]$Root)
+  $rel = $FullPath.Substring($Root.Length)
+  $rel = $rel -replace '^[=\\/]+',''   # strip stray leading = or slashes
+  $rel = $rel -replace '\\','/'        # URL-style slashes
+  return $rel
+}
+
+function HtmlEncode { param($s) return [System.Web.HttpUtility]::HtmlEncode([string]$s) }
+
+# Collect files
 $files = Get-ChildItem -Path $Root -Recurse -File |
-  Where-Object {
-    $_.Extension -match '^\.(html|htm|json)$' -and
-    $_.Name -notmatch '^index\.html?$'
-  }
+  Where-Object { $_.Extension -match '^\.(html|htm|json)$' -and $_.Name -notmatch '^index\.html?$' } |
+  Sort-Object FullName
 
-if (-not $files) {
-  "" | Out-File -Encoding utf8 -FilePath $indexPath
-  Write-Host "No files found under $Root"
-  exit
-}
+# Group by folder
+$groups = $files | ForEach-Object {
+  $relDir = Split-Path $_.FullName -Parent
+  $relDir = Get-RepoRelativePath -FullPath $relDir -Root $Root
+  if ([string]::IsNullOrWhiteSpace($relDir)) { $relDir = "/" }
+  [PSCustomObject]@{ DirRel = $relDir; File = $_ }
+} | Group-Object DirRel | Sort-Object Name
 
-# 2) Helpers
-function Get-RelativePath([string]$full, [string]$root) {
-  $rel = $full.Substring($root.Length).TrimStart('\','/')
-  $rel -replace '\\','/'
-}
-function Encode-WebPath([string]$rel) {
-  $segments = $rel -split '/'
-  $encoded  = foreach ($s in $segments) { [System.Uri]::EscapeDataString([string]$s) }
-  return ($encoded -join '/')
-}
-
-$HtmlEncode = { param($s) [System.Net.WebUtility]::HtmlEncode([string]$s) }
-
-# 3) Build metadata
-$items = $files | ForEach-Object {
-  $rel = Get-RelativePath $_.FullName $Root
-  [pscustomobject]@{
-    Name      = $_.Name
-    DirRel    = (Split-Path $rel -Parent)
-    RelPath   = $rel
-    WebPath   = Encode-WebPath $rel
-    Ext       = $_.Extension.ToLowerInvariant()
-    SizeKB    = [math]::Round($_.Length / 1024, 1)
-    Modified  = $_.LastWriteTime
-  }
-}
-$items | ForEach-Object { if (-not $_.DirRel) { $_.DirRel = "." } }
-$groups = $items | Group-Object DirRel | Sort-Object Name
-
-# 4) CSS
-$style = @'
+# Build HTML
+$html = @"
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>ShareWithFriends - Index</title>
+<style>
 :root { --bg:#0f1020; --card:#17182b; --ink:#e9e9ff; --muted:#a5a7d4; --rule:#2a2b45; }
 *{box-sizing:border-box} body{margin:0;font:15px/1.5 system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:var(--bg);color:var(--ink);}
 main{max-width:1100px;margin:40px auto;padding:24px;background:var(--card);border-radius:16px;box-shadow:0 8px 40px rgba(0,0,0,.35);}
@@ -63,44 +49,46 @@ li a{color:var(--ink);text-decoration:none} li a:hover{text-decoration:underline
 .meta{margin-left:auto;color:var(--muted);font-size:12px;display:flex;gap:12px}
 .folderpath{color:var(--muted);font-size:13px;margin:2px 0 8px}
 hr{border:0;border-top:1px solid var(--rule);margin:16px 0}
-'@
-
-# 5) HTML
-$html = New-Object System.Text.StringBuilder
-[void]$html.AppendLine('<!doctype html>')
-[void]$html.AppendLine('<html lang="en">')
-[void]$html.AppendLine('<meta charset="utf-8" />')
-[void]$html.AppendLine('<meta name="viewport" content="width=device-width, initial-scale=1" />')
-[void]$html.AppendLine('<title>ShareWithFriends - Index</title>')
-[void]$html.AppendLine('<style>')
-[void]$html.AppendLine($style)
-[void]$html.AppendLine('</style>')
-[void]$html.AppendLine('<main>')
-[void]$html.AppendLine('<h1>ShareWithFriends - Index</h1>')
-
-$rootEsc = & $HtmlEncode $Root
-[void]$html.AppendLine("<div class=""folderpath"">Root: <code>$rootEsc</code></div>")
-[void]$html.AppendLine('<hr />')
+</style>
+<main>
+<h1>ShareWithFriends - Index</h1>
+<div class="folderpath">Root: <code>$(HtmlEncode $Root)</code></div>
+<hr />
+"@
 
 foreach ($g in $groups) {
-  $folderLabel = if ($g.Name -eq ".") { "/" } else { "/$($g.Name)" }
-  $folderEsc = & $HtmlEncode $folderLabel
-  [void]$html.AppendLine("<div class=""folder"">$folderEsc</div>")
-  [void]$html.AppendLine('<ul>')
-  $g.Group | Sort-Object Name | ForEach-Object {
-    $label = & $HtmlEncode $_.Name
-    $href  = $_.WebPath
-    $badge = if ($_.Ext -eq ".json") { "JSON" } elseif ($_.Ext -eq ".html" -or $_.Ext -eq ".htm") { "HTML" } else { $_.Ext.TrimStart('.') }
-    $meta  = ("{0} KB · {1}" -f $_.SizeKB, $_.Modified.ToString('yyyy-MM-dd HH:mm'))
-    $metaEsc = & $HtmlEncode $meta
-    $line = "<li><a href=""$href"">$label</a> <span class=""badge"">$badge</span> <span class=""meta"">$metaEsc</span></li>"
-    [void]$html.AppendLine($line)
+  $dirLabel = $g.Name
+  $html += "<div class=`"folder`">$(HtmlEncode $dirLabel)</div>`n<ul>`n"
+  foreach ($f in $g.Group) {
+    # Build a repo-relative, percent-encoded HREF (raw for now)
+    $relRaw = Get-RepoRelativePath -FullPath $f.File.FullName -Root $Root
+    $relEsc = [System.Uri]::EscapeUriString($relRaw)
+
+    $name = HtmlEncode $f.File.Name
+    $ext  = ($f.File.Extension.TrimStart('.')).ToUpperInvariant()
+    $kb   = [math]::Round($f.File.Length / 1024.0, 1)
+    $dt   = $f.File.LastWriteTime.ToString("yyyy-MM-dd HH:mm")
+
+    # Emit raw href first; we'll rewrite .json links in a single safe pass below
+    $html += "<li><a href=""$relEsc"">$name</a> <span class=""badge"">$ext</span> <span class=""meta"">$kb KB &#183; $dt</span></li>`n"
   }
-  [void]$html.AppendLine('</ul>')
+  $html += "</ul>`n"
 }
 
-[void]$html.AppendLine('</main></html>')
+$html += @"
+</main></html>
+"@
 
-# 6) Write
-$html.ToString() | Out-File -Encoding utf8 -FilePath $indexPath
-Write-Host "Wrote $indexPath"
+# --- Safety-net rewrite: force JSON links to go through the viewer -------------
+# The generated hrefs are already percent-encoded, so do NOT re-encode.
+if ($LocalFileMode) {
+  # Local file browsing: viewer without ?src= (use file picker inside viewer)
+  $html = [regex]::Replace($html, 'href="([^"]+\.json)"', 'href="' + $Viewer + '"')
+} else {
+  # Web/HTTP: route to viewer with ?src=<existing href>
+  $html = [regex]::Replace($html, 'href="([^"]+\.json)"', 'href="' + $Viewer + '?src=$1"')
+}
+
+# Write file
+$html | Out-File -FilePath $indexPath -Encoding utf8
+Write-Host "index.html written to $indexPath (LocalFileMode=$LocalFileMode)"
