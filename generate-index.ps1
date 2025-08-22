@@ -8,87 +8,158 @@ $indexPath = Join-Path $Root "index.html"
 
 function Get-RepoRelativePath {
   param([string]$FullPath, [string]$Root)
-  $rel = $FullPath.Substring($Root.Length)
-  $rel = $rel -replace '^[=\\/]+',''   # strip stray leading = or slashes
-  $rel = $rel -replace '\\','/'        # URL-style slashes
-  return $rel
+
+  if ([string]::IsNullOrWhiteSpace($Root)) { throw "Root cannot be null or empty." }
+  if ([string]::IsNullOrWhiteSpace($FullPath)) { return '' }
+
+  try { $rootResolved = (Resolve-Path -LiteralPath $Root -ErrorAction Stop).Path }
+  catch { $rootResolved = [IO.Path]::GetFullPath($Root) }
+  $rootResolved = $rootResolved.TrimEnd('\','/')
+
+  try { $fullResolved = (Resolve-Path -LiteralPath $FullPath -ErrorAction Stop).Path }
+  catch { $fullResolved = [IO.Path]::GetFullPath($FullPath) }
+
+  if ([string]::IsNullOrWhiteSpace($fullResolved)) { return '' }
+
+  if ($fullResolved.StartsWith($rootResolved, [System.StringComparison]::OrdinalIgnoreCase)) {
+    $rel = $fullResolved.Substring($rootResolved.Length).TrimStart('\','/')
+  } else {
+    $uRoot = [Uri](([IO.Path]::GetFullPath(($rootResolved.TrimEnd('\') + '\'))))
+    $uFull = [Uri](([IO.Path]::GetFullPath($fullResolved)))
+    $rel = $uRoot.MakeRelativeUri($uFull).ToString()
+  }
+  return ($rel -replace '\\','/')
 }
 
-function HtmlEncode { param($s) return [System.Web.HttpUtility]::HtmlEncode([string]$s) }
+# Skip noisy folders
+$skipDirs = @('.git','bin','obj','node_modules')
 
-# Collect files
+# 1) Collect files
+$extensions = @('html','htm','md','txt','pdf','json')
 $files = Get-ChildItem -Path $Root -Recurse -File |
-  Where-Object { $_.Extension -match '^\.(html|htm|json)$' -and $_.Name -notmatch '^index\.html?$' } |
+  Where-Object {
+    $ext = $_.Extension.TrimStart('.')
+    $extensions -contains $ext -and
+    $_.Name -notmatch '^index\.html?$' -and
+    ($skipDirs -notcontains $_.Directory.Name)
+  } |
   Sort-Object FullName
 
-# Group by folder
+# 2) Group by relative folder
 $groups = $files | ForEach-Object {
-  $relDir = Split-Path $_.FullName -Parent
-  $relDir = Get-RepoRelativePath -FullPath $relDir -Root $Root
-  if ([string]::IsNullOrWhiteSpace($relDir)) { $relDir = "/" }
-  [PSCustomObject]@{ DirRel = $relDir; File = $_ }
+  $dirFull = Split-Path $_.FullName -Parent
+  $dirRel  = Get-RepoRelativePath -FullPath $dirFull -Root $Root
+  if ([string]::IsNullOrWhiteSpace($dirRel)) { return } # skip bad
+  [PSCustomObject]@{ DirRel = $dirRel; File = $_ }
 } | Group-Object DirRel | Sort-Object Name
 
-# Build HTML
+# 3) CSS
+$css = @"
+:root { --bg:#0f1020; --card:#17182b; --ink:#e9e9ff; --muted:#a5a7d4; --rule:#2a2b45; --accent:#7aa2ff; }
+*{box-sizing:border-box}
+body{margin:0;font:15px/1.5 system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:var(--bg);color:var(--ink)}
+main{max-width:1100px;margin:40px auto;padding:24px;background:var(--card);border-radius:16px;box-shadow:0 8px 40px rgba(0,0,0,.35)}
+h1{margin:0 0 8px}
+.summary-row{display:flex;justify-content:space-between;align-items:center;gap:12px}
+summary{cursor:pointer;list-style:none;outline:none}
+summary::-webkit-details-marker{display:none}
+.folder{padding:12px 14px;border:1px solid var(--rule);border-radius:12px;margin:10px 0;background:#14152a}
+.folder summary{font-weight:600}
+.folder small{color:var(--muted)}
+.folder ul{margin:10px 0 0 0;padding-left:18px}
+.folder li{margin:4px 0}
+.folder a{color:var(--ink);text-decoration:none;border-bottom:1px dotted var(--rule)}
+.folder a:hover{border-bottom-color:var(--accent)}
+.hr{height:1px;background:var(--rule);margin:18px 0}
+header .meta{color:var(--muted);font-size:13px}
+.search{width:100%;padding:10px 12px;border-radius:10px;border:1px solid var(--rule);background:#131428;color:var(--ink)}
+.note{color:var(--muted);font-size:13px;margin-top:6px}
+"@
+
+# 4) Build HTML
 $html = @"
 <!doctype html>
 <html lang="en">
+<head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>ShareWithFriends - Index</title>
+<title>ShareWithFriends &mdash; Index</title>
 <style>
-:root { --bg:#0f1020; --card:#17182b; --ink:#e9e9ff; --muted:#a5a7d4; --rule:#2a2b45; }
-*{box-sizing:border-box} body{margin:0;font:15px/1.5 system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:var(--bg);color:var(--ink);}
-main{max-width:1100px;margin:40px auto;padding:24px;background:var(--card);border-radius:16px;box-shadow:0 8px 40px rgba(0,0,0,.35);}
-h1{margin:0 0 12px;font-weight:700}
-.folder{margin:18px 0 8px;font-weight:600}
-ul{list-style:none;padding:0;margin:0}
-li{padding:10px 12px;border-bottom:1px solid var(--rule);display:flex;gap:12px;align-items:center;flex-wrap:wrap}
-li a{color:var(--ink);text-decoration:none} li a:hover{text-decoration:underline}
-.badge{font-size:12px;padding:2px 6px;border:1px solid var(--rule);border-radius:999px;color:var(--muted)}
-.meta{margin-left:auto;color:var(--muted);font-size:12px;display:flex;gap:12px}
-.folderpath{color:var(--muted);font-size:13px;margin:2px 0 8px}
-hr{border:0;border-top:1px solid var(--rule);margin:16px 0}
+$css
 </style>
+</head>
+<body>
 <main>
-<h1>ShareWithFriends - Index</h1>
-<div class="folderpath">Root: <code>$(HtmlEncode $Root)</code></div>
-<hr />
+  <header>
+    <h1>&#128193; ShareWithFriends &mdash; Index</h1>
+    <div class="meta">Generated: $(Get-Date -Format 'yyyy-MM-dd HH:mm')  &bull;  Root: $((Resolve-Path $Root).Path)</div>
+    <div class="hr"></div>
+    <input class="search" id="filter" placeholder="Type to filter folders & files..." />
+    <div class="note">Tip: each section below is collapsible. Click the folder name to expand. (All are closed by default.)</div>
+  </header>
+  <section id="folders">
 "@
 
+# 5) Folders
 foreach ($g in $groups) {
-  $dirLabel = $g.Name
-  $html += "<div class=`"folder`">$(HtmlEncode $dirLabel)</div>`n<ul>`n"
-  foreach ($f in $g.Group) {
-    # Build a repo-relative, percent-encoded HREF (raw for now)
-    $relRaw = Get-RepoRelativePath -FullPath $f.File.FullName -Root $Root
-    $relEsc = [System.Uri]::EscapeUriString($relRaw)
+  $folder = if ($g.Name -eq '/') { '— root —' } else { $g.Name }
+  $count = $g.Group.Count
 
-    $name = HtmlEncode $f.File.Name
-    $ext  = ($f.File.Extension.TrimStart('.')).ToUpperInvariant()
-    $kb   = [math]::Round($f.File.Length / 1024.0, 1)
-    $dt   = $f.File.LastWriteTime.ToString("yyyy-MM-dd HH:mm")
+  $html += @'
+  <details class="folder"><summary><div class="summary-row"><span>&#128193; {0}</span><small>{1} file(s)</small></div></summary>
+    <ul>
+'@ -f $folder, $count
 
-    # Emit raw href first; we'll rewrite .json links in a single safe pass below
-    $html += "<li><a href=""$relEsc"">$name</a> <span class=""badge"">$ext</span> <span class=""meta"">$kb KB &#183; $dt</span></li>`n"
+  foreach ($entry in $g.Group) {
+    # Each $entry has a .File (the original FileInfo)
+    $file = $entry.File
+    if (-not $file) { continue }
+
+    $relFile = Get-RepoRelativePath -FullPath $file.FullName -Root $Root
+    if ([string]::IsNullOrWhiteSpace($relFile)) { continue }
+
+    $href = [System.Uri]::EscapeUriString($relFile)
+    $name = $file.Name
+
+    if ($file.Extension -match '^\.(json)$') {
+      if ($LocalFileMode) { $href = $Viewer }
+      else { $href = "$Viewer?src=$href" }
+    }
+
+    $html += @'
+      <li><a href="{0}">{1}</a></li>
+'@ -f $href, $name
   }
-  $html += "</ul>`n"
+
+  $html += @'
+    </ul>
+  </details>
+'@
 }
 
+# 6) Footer + JS filter
 $html += @"
-</main></html>
+  </section>
+</main>
+<script>
+(function(){
+  var input = document.getElementById('filter');
+  var sections = Array.prototype.slice.call(document.querySelectorAll('details.folder'));
+  function norm(s){ return (s||'').toLowerCase(); }
+  input.addEventListener('input', function(){
+    var q = norm(input.value.trim());
+    sections.forEach(function(d){
+      if (!q) { d.style.display = ''; return; }
+      var text = norm(d.textContent || '');
+      d.style.display = text.indexOf(q) !== -1 ? '' : 'none';
+    });
+  });
+})();
+</script>
+</body>
+</html>
 "@
 
-# --- Safety-net rewrite: force JSON links to go through the viewer -------------
-# The generated hrefs are already percent-encoded, so do NOT re-encode.
-if ($LocalFileMode) {
-  # Local file browsing: viewer without ?src= (use file picker inside viewer)
-  $html = [regex]::Replace($html, 'href="([^"]+\.json)"', 'href="' + $Viewer + '"')
-} else {
-  # Web/HTTP: route to viewer with ?src=<existing href>
-  $html = [regex]::Replace($html, 'href="([^"]+\.json)"', 'href="' + $Viewer + '?src=$1"')
-}
-
-# Write file
+# 7) Write file (UTF-8)
 $html | Out-File -FilePath $indexPath -Encoding utf8
 Write-Host "index.html written to $indexPath (LocalFileMode=$LocalFileMode)"

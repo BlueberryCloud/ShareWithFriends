@@ -1,50 +1,64 @@
 ﻿<!doctype html>
 <html lang="en">
+<head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>ShareWithFriends - Index</title>
+<title>ShareWithFriends &mdash; Index</title>
 <style>
-:root { --bg:#0f1020; --card:#17182b; --ink:#e9e9ff; --muted:#a5a7d4; --rule:#2a2b45; }
-*{box-sizing:border-box} body{margin:0;font:15px/1.5 system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:var(--bg);color:var(--ink);}
-main{max-width:1100px;margin:40px auto;padding:24px;background:var(--card);border-radius:16px;box-shadow:0 8px 40px rgba(0,0,0,.35);}
-h1{margin:0 0 12px;font-weight:700}
-.folder{margin:18px 0 8px;font-weight:600}
-ul{list-style:none;padding:0;margin:0}
-li{padding:10px 12px;border-bottom:1px solid var(--rule);display:flex;gap:12px;align-items:center;flex-wrap:wrap}
-li a{color:var(--ink);text-decoration:none} li a:hover{text-decoration:underline}
-.badge{font-size:12px;padding:2px 6px;border:1px solid var(--rule);border-radius:999px;color:var(--muted)}
-.meta{margin-left:auto;color:var(--muted);font-size:12px;display:flex;gap:12px}
-.folderpath{color:var(--muted);font-size:13px;margin:2px 0 8px}
-hr{border:0;border-top:1px solid var(--rule);margin:16px 0}
+:root { --bg:#0f1020; --card:#17182b; --ink:#e9e9ff; --muted:#a5a7d4; --rule:#2a2b45; --accent:#7aa2ff; }
+*{box-sizing:border-box}
+body{margin:0;font:15px/1.5 system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:var(--bg);color:var(--ink)}
+main{max-width:1100px;margin:40px auto;padding:24px;background:var(--card);border-radius:16px;box-shadow:0 8px 40px rgba(0,0,0,.35)}
+h1{margin:0 0 8px}
+.summary-row{display:flex;justify-content:space-between;align-items:center;gap:12px}
+summary{cursor:pointer;list-style:none;outline:none}
+summary::-webkit-details-marker{display:none}
+.folder{padding:12px 14px;border:1px solid var(--rule);border-radius:12px;margin:10px 0;background:#14152a}
+.folder summary{font-weight:600}
+.folder small{color:var(--muted)}
+.folder ul{margin:10px 0 0 0;padding-left:18px}
+.folder li{margin:4px 0}
+.folder a{color:var(--ink);text-decoration:none;border-bottom:1px dotted var(--rule)}
+.folder a:hover{border-bottom-color:var(--accent)}
+.hr{height:1px;background:var(--rule);margin:18px 0}
+header .meta{color:var(--muted);font-size:13px}
+.search{width:100%;padding:10px 12px;border-radius:10px;border:1px solid var(--rule);background:#131428;color:var(--ink)}
+.note{color:var(--muted);font-size:13px;margin-top:6px}
 </style>
+</head>
+<body>
 <main>
-<h1>ShareWithFriends - Index</h1>
-<div class="folderpath">Root: <code>C:\Users\parm19\source\repos-share\sharewithfriends</code></div>
-<hr /><div class="folder">/</div>
-<ul>
-<li><a href="0001.html">0001.html</a> <span class="badge">HTML</span> <span class="meta">116.3 KB &#183; 2025-07-08 07:24</span></li>
-<li><a href="application%20lifecycle%20comparison%20table.htm">application lifecycle comparison table.htm</a> <span class="badge">HTM</span> <span class="meta">2.1 KB &#183; 2025-07-26 04:24</span></li>
-<li><a href="cluster-node-pod-container.htm">cluster-node-pod-container.htm</a> <span class="badge">HTM</span> <span class="meta">1.7 KB &#183; 2025-07-13 05:18</span></li>
-<li><a href="devops_syllabus_docker_k8s.html">devops_syllabus_docker_k8s.html</a> <span class="badge">HTML</span> <span class="meta">10.5 KB &#183; 2025-08-19 20:49</span></li>
-<li><a href="docker_phases.htm">docker_phases.htm</a> <span class="badge">HTM</span> <span class="meta">3.8 KB &#183; 2025-07-04 05:49</span></li>
-<li><a href="funny_html_5_banana_party_%F0%9F%8D%8C.html">funny_html_5_banana_party_🍌.html</a> <span class="badge">HTML</span> <span class="meta">7.8 KB &#183; 2025-08-19 18:11</span></li>
-<li><a href="json-viewer.html">json-viewer.html</a> <span class="badge">HTML</span> <span class="meta">4.2 KB &#183; 2025-08-22 02:26</span></li>
-<li><a href="k_8_s_ascii_full_diagram.html">k_8_s_ascii_full_diagram.html</a> <span class="badge">HTML</span> <span class="meta">3.1 KB &#183; 2025-07-28 00:31</span></li>
-<li><a href="k_8_s_coffee_shop_analogy_4_column_html.html">k_8_s_coffee_shop_analogy_4_column_html.html</a> <span class="badge">HTML</span> <span class="meta">11.3 KB &#183; 2025-08-19 16:32</span></li>
-<li><a href="Kubernetes%20flow%20ASCII%20diagram.htm">Kubernetes flow ASCII diagram.htm</a> <span class="badge">HTM</span> <span class="meta">3.2 KB &#183; 2025-07-26 01:17</span></li>
-<li><a href="kubernetes_lemonade_analogy_table.html">kubernetes_lemonade_analogy_table.html</a> <span class="badge">HTML</span> <span class="meta">4.1 KB &#183; 2025-07-14 05:50</span></li>
-<li><a href="Multi-Site%20App%20Pool%20vs%20Multi-Container%20Pod.html">Multi-Site App Pool vs Multi-Container Pod.html</a> <span class="badge">HTML</span> <span class="meta">2.7 KB &#183; 2025-07-26 01:22</span></li>
-</ul>
-<div class="folder">EachClassPhases1-7</div>
-<ul>
-<li><a href="EachClassPhases1-7/phase_1_docker_fundamentals.html">phase_1_docker_fundamentals.html</a> <span class="badge">HTML</span> <span class="meta">5.2 KB &#183; 2025-08-21 11:17</span></li>
-</ul>
-<div class="folder">Free Cloud Sign Up prompts and steps</div>
-<ul>
-<li><a href="Free%20Cloud%20Sign%20Up%20prompts%20and%20steps/Amazon%20--%20aws_free_tier_cli_power_shell_html.html">Amazon -- aws_free_tier_cli_power_shell_html.html</a> <span class="badge">HTML</span> <span class="meta">9.2 KB &#183; 2025-08-20 11:14</span></li>
-</ul>
-<div class="folder">zzz_JSON tests</div>
-<ul>
-<li><a href="json-viewer.html?src=zzz_JSON%20tests/test001.json">test001.json</a> <span class="badge">JSON</span> <span class="meta">0.6 KB &#183; 2025-08-22 02:10</span></li>
-</ul>
-</main></html>
+  <header>
+    <h1>&#128193; ShareWithFriends &mdash; Index</h1>
+    <div class="meta">Generated: 2025-08-22 03:52  &bull;  Root: C:\Users\parm19\source\repos-share\sharewithfriends</div>
+    <div class="hr"></div>
+    <input class="search" id="filter" placeholder="Type to filter folders & files..." />
+    <div class="note">Tip: each section below is collapsible. Click the folder name to expand. (All are closed by default.)</div>
+  </header>
+  <section id="folders">  <details class="folder"><summary><div class="summary-row"><span>&#128193; 7 Labs - Practical Worksheets</span><small>1 file(s)</small></div></summary>
+    <ul>      <li><a href="7%20Labs%20-%20Practical%20Worksheets/Lab%201.html">Lab 1.html</a></li>    </ul>
+  </details>  <details class="folder"><summary><div class="summary-row"><span>&#128193; Free Accounts & Tools – How-To</span><small>1 file(s)</small></div></summary>
+    <ul>      <li><a href="Free%20Accounts%20&%20Tools%20%E2%80%93%20How-To/Amazon%20--%20aws_free_tier_cli_power_shell_html.html">Amazon -- aws_free_tier_cli_power_shell_html.html</a></li>    </ul>
+  </details>  <details class="folder"><summary><div class="summary-row"><span>&#128193; zzz_JSON tests</span><small>1 file(s)</small></div></summary>
+    <ul>      <li><a href="=zzz_JSON%20tests/test001.json">test001.json</a></li>    </ul>
+  </details>  <details class="folder"><summary><div class="summary-row"><span>&#128193; zzz_unsorted</span><small>13 file(s)</small></div></summary>
+    <ul>      <li><a href="zzz_unsorted/0001.html">0001.html</a></li>      <li><a href="zzz_unsorted/application%20lifecycle%20comparison%20table.htm">application lifecycle comparison table.htm</a></li>      <li><a href="zzz_unsorted/cluster-node-pod-container.htm">cluster-node-pod-container.htm</a></li>      <li><a href="zzz_unsorted/deployment.txt">deployment.txt</a></li>      <li><a href="zzz_unsorted/devops_syllabus_docker_k8s.html">devops_syllabus_docker_k8s.html</a></li>      <li><a href="zzz_unsorted/docker_phases.htm">docker_phases.htm</a></li>      <li><a href="zzz_unsorted/funny_html_5_banana_party_%F0%9F%8D%8C.html">funny_html_5_banana_party_🍌.html</a></li>      <li><a href="zzz_unsorted/k_8_s_ascii_full_diagram.html">k_8_s_ascii_full_diagram.html</a></li>      <li><a href="zzz_unsorted/k_8_s_coffee_shop_analogy_4_column_html.html">k_8_s_coffee_shop_analogy_4_column_html.html</a></li>      <li><a href="zzz_unsorted/Kubernetes%20flow%20ASCII%20diagram.htm">Kubernetes flow ASCII diagram.htm</a></li>      <li><a href="zzz_unsorted/kubernetes_lemonade_analogy_table.html">kubernetes_lemonade_analogy_table.html</a></li>      <li><a href="zzz_unsorted/Multi-Site%20App%20Pool%20vs%20Multi-Container%20Pod.html">Multi-Site App Pool vs Multi-Container Pod.html</a></li>      <li><a href="zzz_unsorted/New%20Text%20Document.txt">New Text Document.txt</a></li>    </ul>
+  </details>  </section>
+</main>
+<script>
+(function(){
+  var input = document.getElementById('filter');
+  var sections = Array.prototype.slice.call(document.querySelectorAll('details.folder'));
+  function norm(s){ return (s||'').toLowerCase(); }
+  input.addEventListener('input', function(){
+    var q = norm(input.value.trim());
+    sections.forEach(function(d){
+      if (!q) { d.style.display = ''; return; }
+      var text = norm(d.textContent || '');
+      d.style.display = text.indexOf(q) !== -1 ? '' : 'none';
+    });
+  });
+})();
+</script>
+</body>
+</html>
