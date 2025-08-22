@@ -1,0 +1,22 @@
+[
+  {
+    "task": "Install Docker Desktop",
+    "command": "docker --version",
+    "say": "I installed Docker Desktop and verified the version."
+  },
+  {
+    "task": "Run Nginx container",
+    "command": "docker run -d -p 8080:80 nginx",
+    "say": "I started Nginx and exposed it on port 8080."
+  },
+  {
+    "task": "Check Kubernetes nodes",
+    "command": "kubectl get nodes",
+    "say": "I listed the cluster nodes."
+  },
+  {
+    "task": "Deploy sample app",
+    "command": "kubectl apply -f app.yaml",
+    "say": "I deployed a sample app using a manifest."
+  }
+]

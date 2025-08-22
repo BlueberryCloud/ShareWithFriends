@@ -1,190 +1,106 @@
-# generate-index.ps1 — pretty index grouped by folders (PowerShell-safe heredocs)
+# generate-index.ps1 — Web-safe index with relative links (HTML/JSON)
+param(
+  [string]$Root = (Get-Location).Path,
+  [string]$Output = "index.html"
+)
 
-# 1) Set your repo path (or replace with: $root = (Get-Location).Path )
-$root = "C:\Users\parm19\source\repos-share\sharewithfriends"
-$indexPath = Join-Path $root "index.html"
+$ErrorActionPreference = "Stop"
+$indexPath = Join-Path $Root $Output
 
-# 2) Collect .html/.htm files (skip index.html)
-$files = Get-ChildItem -Path $root -Recurse -File -Include *.html,*.htm |
-  Where-Object { $_.Name -notmatch '^index\.html?$' }
-
-# Group by relative directory ('' => '/')
-$groups = $files |
-  Group-Object {
-    ($_.DirectoryName.Substring($root.Length).TrimStart('\','/') -replace '\\','/')
-  } |
-  Sort-Object Name
-
-[int]$total = $files.Count
-
-# 3) Start HTML
-$html = @"
-<!doctype html>
-<html lang="en">
-<head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>ShareWithFriends — Index</title>
-<style>
-  :root {
-    --bg:#0f1020; --card:#17182b; --ink:#e9e9ff; --muted:#a5a7d4;
-    --accent:#7c6cff; --accent2:#ff5db1; --ring:rgba(124,108,255,.35);
-  }
-  *{box-sizing:border-box}
-  body{
-    margin:0;color:var(--ink);
-    font:16px/1.5 system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
-    background:
-      radial-gradient(1000px 700px at 8% -10%, #27224f 0%, transparent 60%),
-      radial-gradient(900px 600px at 110% 10%, #2b1b3f 0%, transparent 60%),
-      linear-gradient(180deg, #0b0b18, #0f1020 35%);
-    min-height:100vh;
-  }
-  header{
-    border-bottom:1px solid rgba(124,108,255,.25);
-    background:linear-gradient(180deg, rgba(15,16,32,.9), rgba(15,16,32,.55));
-    backdrop-filter:blur(6px);
-  }
-  .wrap{max-width:1100px;margin:0 auto;padding:18px 16px}
-  h1{margin:0;font-size:22px;font-weight:800;letter-spacing:.25px}
-  .muted{color:var(--muted);font-size:13px;margin-top:4px}
-
-  .hero{max-width:1100px;margin:24px auto; padding:0 16px; display:grid; grid-template-columns:1.2fr .8fr; gap:24px}
-  @media (max-width:900px){.hero{grid-template-columns:1fr}}
-  .card{background:var(--card); border:1px solid rgba(124,108,255,.2); border-radius:16px; padding:18px; box-shadow:0 10px 30px rgba(0,0,0,.25)}
-
-  .list{list-style:none; padding:0; margin:0}
-  .item{display:flex;align-items:center;gap:10px;padding:10px 12px;margin:8px 0;
-    background:linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,0));
-    border:1px solid rgba(124,108,255,.18); border-radius:12px;
-    transition:transform .06s ease, border-color .2s}
-  .item:hover{transform:translateY(-1px); border-color:rgba(255,93,177,.45)}
-  .badge{min-width:26px;height:26px;border-radius:8px;display:inline-flex;align-items:center;justify-content:center;
-    font-size:12px;font-weight:800;color:#fff;background:linear-gradient(135deg,var(--accent),var(--accent2));
-    box-shadow:0 6px 16px rgba(124,108,255,.35)}
-  .name{flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-  a{color:var(--ink); text-decoration:none; border-bottom:1px dotted rgba(124,108,255,.45)}
-  a:hover{color:#fff; border-bottom-color:rgba(255,93,177,.75)}
-  .small{color:var(--muted); font-size:12px}
-
-  details.folder{margin:10px 0; border:1px solid rgba(124,108,255,.22); border-radius:12px; padding:12px; background:linear-gradient(180deg, rgba(255,255,255,.02), rgba(255,255,255,0))}
-  details.folder[open]{border-color:rgba(255,93,177,.45)}
-  summary{list-style:none; cursor:pointer; display:flex; align-items:center; gap:10px}
-  summary::-webkit-details-marker{display:none}
-  .folder-name{font-weight:700}
-  .folder-meta{margin-left:auto; font-size:12px; color:var(--muted)}
-  .folder-badge{min-width:26px;height:26px;border-radius:8px;display:inline-flex;align-items:center;justify-content:center;
-    font-size:12px;font-weight:800;color:#fff;background:linear-gradient(135deg,#4ecdc4,#45b7ff); box-shadow:0 6px 16px rgba(69,183,255,.35)}
-  .folder-list{margin:10px 0 0 0; padding-left:0}
-  .avatar{
-    aspect-ratio: 1/1; width:100%;
-    border:1px solid rgba(124,108,255,.2); border-radius:16px;
-    background:
-      radial-gradient(220px 160px at 70% 20%, rgba(255,255,255,.06), transparent 60%),
-      radial-gradient(180px 140px at 20% 85%, rgba(255,93,177,.20), transparent 70%);
-    display:grid; place-items:center;
-  }
-  .note{ text-align:center; color:var(--muted); font-size:12px; margin-top:10px }
-</style>
-</head>
-<body>
-<header>
-  <div class="wrap">
-    <h1>ShareWithFriends</h1>
-    <div class="muted">Auto-generated index of your pages (grouped by folders)</div>
-  </div>
-</header>
-
-<div class="hero">
-  <div class="card">
-    <h2 style="margin:0 0 10px 0;">Available Files by Folder</h2>
-    <div class="small" style="margin:0 0 8px 0;">Total: $total file(s)</div>
-"@
-
-# 4) Add each folder group with its files
-foreach ($g in $groups) {
-  $folder = if ([string]::IsNullOrWhiteSpace($g.Name)) { "/" } else { "/$($g.Name.TrimStart('/'))" }
-  $count = $g.Group.Count
-
-  $html += @"
-    <details class="folder">
-      <summary>
-        <span class="folder-badge">D</span>
-        <span class="folder-name">$folder</span>
-        <span class="folder-meta">$count file(s)</span>
-      </summary>
-      <ul class="list folder-list">
-"@
-
-  foreach ($f in ($g.Group | Sort-Object Name)) {
-    $rel  = $f.FullName.Substring($root.Length).TrimStart('\','/') -replace '\\','/'
-    $name = $f.Name
-    $html += "        <li class=""item""><span class=""badge"">F</span><span class=""name""><a href=""$rel"">$name</a></span><span class=""small"">$rel</span></li>`n"
+# 1) Collect files (recursive), skip index.html itself
+$files = Get-ChildItem -Path $Root -Recurse -File |
+  Where-Object {
+    $_.Extension -match '^\.(html|htm|json)$' -and
+    $_.Name -notmatch '^index\.html?$'
   }
 
-  $html += @"
-      </ul>
-    </details>
-"@
+if (-not $files) {
+  "" | Out-File -Encoding utf8 -FilePath $indexPath
+  Write-Host "No files found under $Root"
+  exit
 }
 
-# 5) Close HTML with avatar block
-$html += @"
-  </div>
+# 2) Helpers
+function Get-RelativePath([string]$full, [string]$root) {
+  $rel = $full.Substring($root.Length).TrimStart('\','/')
+  $rel -replace '\\','/'
+}
+function Encode-WebPath([string]$rel) {
+  $segments = $rel -split '/'
+  $encoded  = foreach ($s in $segments) { [System.Uri]::EscapeDataString([string]$s) }
+  return ($encoded -join '/')
+}
 
-  <div>
-    <div class="avatar card" aria-label="professional avatar illustration">
-      <!-- Professional, tasteful avatar (business attire) -->
-      <svg viewBox="0 0 240 300" width="90%" role="img" aria-label="professional person illustration">
-        <defs>
-          <linearGradient id="skin" x1="0" x2="1" y1="0" y2="1">
-            <stop offset="0" stop-color="#f6d6c1"/><stop offset="1" stop-color="#e7bda3"/>
-          </linearGradient>
-          <linearGradient id="accent" x1="0" x2="1" y1="0" y2="1">
-            <stop offset="0" stop-color="#7c6cff"/><stop offset="1" stop-color="#ff5db1"/>
-          </linearGradient>
-          <filter id="soft"><feGaussianBlur stdDeviation="1.4"/></filter>
-        </defs>
+$HtmlEncode = { param($s) [System.Net.WebUtility]::HtmlEncode([string]$s) }
 
-        <!-- hair (blonde tone) -->
-        <path d="M120,46c28,0,44,18,48,36 4,18-4,40-4,40l-12-6-8-16-20,6-20-6-8,16-12,6c0,0-8-22-4-40 4-18,20-36,40-36z"
-              fill="#f3d06b" filter="url(#soft)"/>
+# 3) Build metadata
+$items = $files | ForEach-Object {
+  $rel = Get-RelativePath $_.FullName $Root
+  [pscustomobject]@{
+    Name      = $_.Name
+    DirRel    = (Split-Path $rel -Parent)
+    RelPath   = $rel
+    WebPath   = Encode-WebPath $rel
+    Ext       = $_.Extension.ToLowerInvariant()
+    SizeKB    = [math]::Round($_.Length / 1024, 1)
+    Modified  = $_.LastWriteTime
+  }
+}
+$items | ForEach-Object { if (-not $_.DirRel) { $_.DirRel = "." } }
+$groups = $items | Group-Object DirRel | Sort-Object Name
 
-        <!-- head -->
-        <circle cx="120" cy="70" r="20" fill="url(#skin)" />
+# 4) CSS
+$style = @'
+:root { --bg:#0f1020; --card:#17182b; --ink:#e9e9ff; --muted:#a5a7d4; --rule:#2a2b45; }
+*{box-sizing:border-box} body{margin:0;font:15px/1.5 system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:var(--bg);color:var(--ink);}
+main{max-width:1100px;margin:40px auto;padding:24px;background:var(--card);border-radius:16px;box-shadow:0 8px 40px rgba(0,0,0,.35);}
+h1{margin:0 0 12px;font-weight:700}
+.folder{margin:18px 0 8px;font-weight:600}
+ul{list-style:none;padding:0;margin:0}
+li{padding:10px 12px;border-bottom:1px solid var(--rule);display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+li a{color:var(--ink);text-decoration:none} li a:hover{text-decoration:underline}
+.badge{font-size:12px;padding:2px 6px;border:1px solid var(--rule);border-radius:999px;color:var(--muted)}
+.meta{margin-left:auto;color:var(--muted);font-size:12px;display:flex;gap:12px}
+.folderpath{color:var(--muted);font-size:13px;margin:2px 0 8px}
+hr{border:0;border-top:1px solid var(--rule);margin:16px 0}
+'@
 
-        <!-- neck -->
-        <rect x="112" y="88" width="16" height="16" rx="8" fill="url(#skin)"/>
+# 5) HTML
+$html = New-Object System.Text.StringBuilder
+[void]$html.AppendLine('<!doctype html>')
+[void]$html.AppendLine('<html lang="en">')
+[void]$html.AppendLine('<meta charset="utf-8" />')
+[void]$html.AppendLine('<meta name="viewport" content="width=device-width, initial-scale=1" />')
+[void]$html.AppendLine('<title>ShareWithFriends - Index</title>')
+[void]$html.AppendLine('<style>')
+[void]$html.AppendLine($style)
+[void]$html.AppendLine('</style>')
+[void]$html.AppendLine('<main>')
+[void]$html.AppendLine('<h1>ShareWithFriends - Index</h1>')
 
-        <!-- blazer (navy) -->
-        <path d="M72,120 h96 v64 c0,12-10,22-22,22 h-52 c-12,0-22-10-22-22z" fill="#27324a"/>
-        <!-- lapels -->
-        <path d="M90,120 l30,40 l-22,0 l-18,-34 z" fill="#1e2740"/>
-        <path d="M150,120 l-30,40 l22,0 l18,-34 z" fill="#1e2740"/>
+$rootEsc = & $HtmlEncode $Root
+[void]$html.AppendLine("<div class=""folderpath"">Root: <code>$rootEsc</code></div>")
+[void]$html.AppendLine('<hr />')
 
-        <!-- blouse -->
-        <rect x="102" y="120" width="36" height="28" rx="6" fill="#ffffff" opacity="0.9"/>
+foreach ($g in $groups) {
+  $folderLabel = if ($g.Name -eq ".") { "/" } else { "/$($g.Name)" }
+  $folderEsc = & $HtmlEncode $folderLabel
+  [void]$html.AppendLine("<div class=""folder"">$folderEsc</div>")
+  [void]$html.AppendLine('<ul>')
+  $g.Group | Sort-Object Name | ForEach-Object {
+    $label = & $HtmlEncode $_.Name
+    $href  = $_.WebPath
+    $badge = if ($_.Ext -eq ".json") { "JSON" } elseif ($_.Ext -eq ".html" -or $_.Ext -eq ".htm") { "HTML" } else { $_.Ext.TrimStart('.') }
+    $meta  = ("{0} KB · {1}" -f $_.SizeKB, $_.Modified.ToString('yyyy-MM-dd HH:mm'))
+    $metaEsc = & $HtmlEncode $meta
+    $line = "<li><a href=""$href"">$label</a> <span class=""badge"">$badge</span> <span class=""meta"">$metaEsc</span></li>"
+    [void]$html.AppendLine($line)
+  }
+  [void]$html.AppendLine('</ul>')
+}
 
-        <!-- skirt (knee length, professional) -->
-        <path d="M84,184 h72 l8,38 h-88z" fill="url(#accent)" opacity="0.9"/>
+[void]$html.AppendLine('</main></html>')
 
-        <!-- legs (tights) -->
-        <rect x="104" y="222" width="10" height="48" rx="5" fill="#d7c6e9"/>
-        <rect x="126" y="222" width="10" height="48" rx="5" fill="#d7c6e9"/>
-
-        <!-- shoes -->
-        <ellipse cx="109" cy="272" rx="12" ry="5" fill="#7c6cff"/>
-        <ellipse cx="131" cy="272" rx="12" ry="5" fill="#7c6cff"/>
-      </svg>
-    </div>
-    <div class="note">Friendly, professional avatar for presentation aesthetics.</div>
-  </div>
-</div>
-
-</body>
-</html>
-"@
-
-# 6) Write file
-Set-Content -Path $indexPath -Value $html -Encoding UTF8
-Write-Host "index.html generated at $indexPath (listed $total file(s))."
+# 6) Write
+$html.ToString() | Out-File -Encoding utf8 -FilePath $indexPath
+Write-Host "Wrote $indexPath"

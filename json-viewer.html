@@ -1,0 +1,74 @@
+<!doctype html>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>JSON Viewer</title>
+<style>
+  body{margin:0;font:15px/1.5 system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:#0f1020;color:#e9e9ff}
+  main{max-width:1100px;margin:40px auto;padding:24px;background:#17182b;border-radius:16px}
+  table{width:100%;border-collapse:collapse;font-size:14px}
+  th,td{padding:10px 12px;border-bottom:1px solid rgba(255,255,255,.08);vertical-align:top}
+  th{text-align:left;position:sticky;top:0;background:rgba(23,24,43,.96)}
+  tr:hover td{background:rgba(255,255,255,.02)}
+  code,pre{background:rgba(255,255,255,.06);padding:2px 6px;border-radius:6px}
+  pre{padding:16px;overflow:auto}
+  input,button{font:inherit}
+  .row{display:flex;gap:8px;align-items:center;margin-bottom:12px}
+  .muted{color:#a5a7d4;font-size:13px}
+  .drop{border:1px dashed #3e3f7a;border-radius:10px;padding:14px;text-align:center;margin-top:6px}
+</style>
+<main>
+  <h1>JSON Viewer</h1>
+  <div class="row">
+    <form id="f" class="row" onsubmit="return false;">
+      <input id="src" placeholder="Paste JSON URL (same-origin) …" style="flex:1;padding:8px 10px;border-radius:8px;border:1px solid #3e3f7a;background:#0f1020;color:#e9e9ff">
+      <button id="loadBtn">Load</button>
+    </form>
+    <span class="muted">or</span>
+    <input type="file" id="file" accept=".json,application/json">
+  </div>
+  <div class="drop" id="drop">Drop a .json file here</div>
+  <div id="out" style="margin-top:16px"></div>
+</main>
+<script>
+const $=s=>document.querySelector(s), out=$("#out"), qp=new URLSearchParams(location.search);
+$("#loadBtn").addEventListener("click", ()=>{ const u=$("#src").value.trim(); if(u){ history.replaceState(null,"","?src="+encodeURIComponent(u)); loadUrl(u); }});
+$("#file").addEventListener("change", e=>{ const f=e.target.files[0]; if(f) loadFile(f); });
+const drop=$("#drop"); drop.addEventListener("dragover", e=>{e.preventDefault();}); drop.addEventListener("drop", e=>{e.preventDefault(); if(e.dataTransfer.files[0]) loadFile(e.dataTransfer.files[0]);});
+if(qp.get("src")){ $("#src").value = qp.get("src"); loadUrl(qp.get("src")); }
+
+async function loadUrl(url){
+  out.innerHTML="<p>Loading…</p>";
+  try{
+    const res=await fetch(url);
+    if(!res.ok) throw new Error(res.status+" "+res.statusText);
+    const data=await res.json();
+    render(data);
+  }catch(e){
+    out.innerHTML=`<p>Failed to load: <code>${esc(String(e))}</code></p><p class="muted">If you opened this page via <code>file://</code>, browsers block <code>fetch()</code> to local files. Either run a local server (e.g., <code>python -m http.server</code>) and use <code>http://localhost</code> URLs, or use the file picker / drag-and-drop above.</p>`;
+  }
+}
+function loadFile(file){
+  out.innerHTML="<p>Reading file…</p>";
+  const reader = new FileReader();
+  reader.onload = () => {
+    try { const data = JSON.parse(reader.result); render(data); }
+    catch(e){ out.innerHTML=`<p>Could not parse JSON: <code>${esc(String(e))}</code></p>`; }
+  };
+  reader.onerror = () => out.innerHTML=`<p>Read failed: <code>${esc(String(reader.error))}</code></p>`;
+  reader.readAsText(file);
+}
+function render(data){ out.innerHTML = isTabular(data) ? tableHtml(tabularRows(data)) : `<pre>${esc(JSON.stringify(data,null,2))}</pre>`; }
+function isTabular(d){ return Array.isArray(d)&&d.length&&typeof d[0]==="object" || (d&&typeof d==="object"&&Object.values(d).some(v=>Array.isArray(v)&&v.length&&typeof v[0]==="object")); }
+function tabularRows(d){ return Array.isArray(d)?d:Object.values(d).find(v=>Array.isArray(v)&&v.length&&typeof v[0]==="object"); }
+function keysOf(rows){ const s=new Set(); rows.forEach(r=>Object.keys(r).forEach(k=>s.add(k))); return [...s]; }
+function esc(s){ return String(s).replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;"); }
+function tableHtml(rows){
+  const cols=keysOf(rows);
+  const head=cols.map(k=>`<th>${esc(k)}</th>`).join("");
+  const body=rows.map(r=>`<tr>${cols.map(k=>{
+    const v=r?.[k]; const cell=v==null?"":(typeof v==="object"?JSON.stringify(v):String(v));
+    return `<td>${esc(cell)}</td>`;
+  }).join("")}</tr>`).join("");
+  return `<table><thead><tr>${head}</tr></thead><tbody>${body}</tbody></table>`;
+}
+</script>
