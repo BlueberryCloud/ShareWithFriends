@@ -1,7 +1,7 @@
 param(
-  [switch]$LocalFileMode,  # if set, JSON links won't include ?src=
+  [switch]$LocalFileMode,  # when set, JSON links won't include ?src=
   [string]$Root   = "C:\Users\parm19\source\repos-share\sharewithfriends",
-  [string]$Viewer = "json-viewer.html"
+  [string]$Viewer = "json-viewer.html"  # sit this next to index.html on Cloudflare Pages
 )
 
 $indexPath = Join-Path $Root "index.html"
@@ -74,9 +74,11 @@ summary::-webkit-details-marker{display:none}
 header .meta{color:var(--muted);font-size:13px}
 .search{width:100%;padding:10px 12px;border-radius:10px;border:1px solid var(--rule);background:#131428;color:var(--ink)}
 .note{color:var(--muted);font-size:13px;margin-top:6px}
+.badge{display:inline-block;padding:2px 8px;border:1px solid var(--rule);border-radius:999px;font-size:12px;margin-left:6px}
 "@
 
 # 4) Build HTML
+$modeText = if ($LocalFileMode) { "LocalFileMode" } else { "Cloud (viewer ?src)" }
 $html = @"
 <!doctype html>
 <html lang="en">
@@ -91,7 +93,7 @@ $css
 <body>
 <main>
   <header>
-    <h1>&#128193; ShareWithFriends &mdash; Index</h1>
+    <h1>&#128193; ShareWithFriends &mdash; Index <span class="badge">$modeText</span></h1>
     <div class="meta">Generated: $(Get-Date -Format 'yyyy-MM-dd HH:mm')  &bull;  Root: $((Resolve-Path $Root).Path)</div>
     <div class="hr"></div>
     <input class="search" id="filter" placeholder="Type to filter folders & files..." />
@@ -119,16 +121,15 @@ foreach ($g in $groups) {
 
     $name = $file.Name
 
-    # JSON behavior:
-    # - Cloud (default): link to viewer with ?src=<encoded relative path>
-    # - LocalFileMode: link to viewer only (viewer should let user pick file)
-    if ($file.Extension -match '^\.(json)$') {
-      if ($LocalFileMode) {
-        $href = $Viewer
-      } else {
-        # Safer for query params than EscapeUriString
-        $href = "$Viewer?src=$([System.Uri]::EscapeDataString($relFile))"
-      }
+    # Robust JSON detection (extension + name pattern)
+    $isJson = $false
+    $ext = [IO.Path]::GetExtension($file.Name)
+    if ($ext) { $isJson = $isJson -or ($ext.Trim().ToLower() -eq '.json') }
+    if (-not $isJson) { $isJson = $file.Name -like '*.json' }
+
+    if ($isJson) {
+      # Always link to viewer with ?src==<encoded rel path> for JSON files
+      $href = "$($Viewer)?src=$([System.Uri]::EscapeDataString(($relFile -replace '\\','/')))"
     } else {
       # Non-JSON direct link
       $href = [System.Uri]::EscapeUriString($relFile)
@@ -171,3 +172,42 @@ $html += @"
 # 7) Write file (UTF-8)
 $html | Out-File -FilePath $indexPath -Encoding utf8
 Write-Host "index.html written to $indexPath (LocalFileMode=$LocalFileMode)"
+
+# 8) Debug logging for JSON detection
+Write-Host "=== DEBUG: JSON File Detection ==="
+$jsonFiles = $files | Where-Object { 
+    $ext = [IO.Path]::GetExtension($_.Name)
+    $isJson = ($ext.Trim().ToLower() -eq '.json') -or ($_.Name -like '*.json')
+    if ($isJson) {
+        Write-Host "JSON file found: $($_.FullName)"
+        Write-Host "  Extension: '$ext'"
+        Write-Host "  Name pattern match: $($_.Name -like '*.json')"
+    }
+    $isJson
+}
+Write-Host "Total JSON files found: $($jsonFiles.Count)"
+
+# 9) Debug URL generation for JSON files
+Write-Host "=== DEBUG: JSON URL Generation ==="
+foreach ($jsonFile in $jsonFiles) {
+    $relFile = Get-RepoRelativePath -FullPath $jsonFile.FullName -Root $Root
+    $encodedPath = [System.Uri]::EscapeDataString($relFile)
+    $viewerUrl = "$Viewer?src==$encodedPath"
+    Write-Host "File: $($jsonFile.Name)"
+    Write-Host "  Relative path: $relFile"
+    Write-Host "  Encoded path: $encodedPath"
+    Write-Host "  Viewer URL: $viewerUrl"
+    Write-Host "---"
+}
+
+# 10) Execute the script if called directly
+if ($MyInvocation.InvocationName -eq $MyInvocation.MyCommand.Name) {
+    Write-Host "Script executed successfully!"
+}
+
+# 11) Allow script to be run directly with parameters
+if ($MyInvocation.InvocationName -eq $MyInvocation.MyCommand.Name) {
+    # Script is being run directly, not dot-sourced
+    Write-Host "Running generate-index.ps1..."
+    Write-Host "Parameters: LocalFileMode=$LocalFileMode, Root=$Root, Viewer=$Viewer"
+}
