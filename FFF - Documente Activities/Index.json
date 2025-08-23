@@ -1,0 +1,13 @@
+{
+  "folder": "document-activities",
+  "purpose": "This folder is dedicated to storing and sharing documents related to activities within the ShareWithFriends project. It acts as a central space for reports, notes, task breakdowns, and any other project-related written material.",
+  "createdBy": "BlueberryCloud Org",
+  "project": "ShareWithFriends",
+  "lastUpdated": "2025-08-23",
+  "guidelines": [
+    "Use this folder only for activity-related documents.",
+    "Keep file names descriptive and consistent (e.g., activity-report-001.html).",
+    "Prefer HTML or Markdown formats for easy rendering in Cloudflare Pages.",
+    "Update this JSON if folder purpose or structure changes."
+  ]
+}
