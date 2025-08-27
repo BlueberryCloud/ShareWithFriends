@@ -1,0 +1,35 @@
+[
+    {
+        "task": "Install Docker Desktop",
+        "why": [
+            "I need to deploy applications on my machine that have unique dependencies, and I don't want to clutter my system.",
+            "Using Docker lets me isolate those dependencies (like SQL Server or document databases).",
+            "It also makes it easier to share or push projects to GitHub with reproducible environments."
+        ],
+        "how": "Download the Windows installer for Docker.",
+        "notes": "Make sure to install WSL from the UI installer; otherwise, you might get some issues.",
+        "say_it_out_loud": [
+            "I hate my life",
+            "I am installing this because I don't want to host my site on my local machine",
+            "If I host it on my machine and it crashes, I have to start from scratch",
+            "But if I have a Docker image, I have isolated dependencies to an image",
+            "I may also want to scale up my application, so I need to get familiar with Kubernetes.",
+            "Practicing Kubernetes across cloud providers costs money, so I’d rather use the local Docker Desktop version."
+        ],
+        "terms_and_metaphors": [
+            "Docker is a building inside a building",
+            "It's like basically a VM but not as resource draining"
+        ],
+        "ascii_diagram": "can we please stop. I can't even put a diagram here bro, maybe a link I dunno",
+        "command_breakdown": [
+            "Run using the Windows installer"
+        ],
+        "my_questions": [
+            "Why do I need to install this first?"
+        ],
+        "evidence": {
+            "screenshot_path": "",
+            "repo_commit": ""
+        }
+    }
+]
