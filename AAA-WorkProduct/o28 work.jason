@@ -1,0 +1,32 @@
+{
+  "setup": {
+    "install_choco": "Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))",
+    "install_helm": "choco install kubernetes-helm -y",
+    "check_version": "helm version"
+  },
+  "helm_repo": {
+    "add_bitnami": "helm repo add bitnami https://charts.bitnami.com/bitnami",
+    "update_repo": "helm repo update"
+  },
+  "nginx_chart": {
+    "pull_chart": "helm pull bitnami/nginx --untar",
+    "deploy_chart": "helm install my-nginx ./nginx",
+    "list_releases": "helm list",
+    "verify_pods": "kubectl get pods",
+    "verify_service": "kubectl get svc my-nginx -o wide"
+  },
+  "git_ops": {
+    "init": "git init",
+    "add_commit": "git add . && git commit -m 'Initial nginx helm chart'",
+    "push_repo": "gh repo create BlueberryCloud/nginx-helm --private --source=. --remote=origin --push"
+  },
+  "updates": {
+    "edit_values": "Edit values.yaml -> replicaCount: 2",
+    "commit_update": "git add values.yaml && git commit -m 'Update replicaCount' && git push origin master",
+    "upgrade": "helm upgrade my-nginx ./nginx"
+  },
+  "access_service": {
+    "port_forward": "kubectl port-forward svc/my-nginx 8080:80 -> open http://localhost:8080",
+    "nodeport_or_lb": "Check nodePort or EXTERNAL-IP from kubectl get svc my-nginx"
+  }
+}
