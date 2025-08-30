@@ -1,0 +1,43 @@
+{
+  "today_summary": {
+    "repo_and_chart": {
+      "pull_chart": "helm pull bitnami/nginx --untar",
+      "chart_folder": "nginx/"
+    },
+    "git_ops": {
+      "init": "git init",
+      "first_commit": "git add . && git commit -m 'Initial nginx helm chart'",
+      "push_to_org": "gh repo create BlueberryCloud/nginx-helm --private --source=. --remote=origin --push"
+    },
+    "deploy_nginx": {
+      "install": "helm install my-nginx ./nginx",
+      "verify_releases": "helm list",
+      "verify_pods": "kubectl get pods",
+      "verify_service": "kubectl get svc my-nginx -o wide"
+    },
+    "first_edit": {
+      "open_values": "code values.yaml",
+      "change": "replicaCount: 1 -> 3",
+      "commit_change": "git add values.yaml && git commit -m 'Scale nginx to 3 replicas' && git push origin master",
+      "apply_change": "helm upgrade my-nginx ./nginx",
+      "verify_pods_scaled": "kubectl get pods"
+    },
+    "troubleshooting": {
+      "old_pod": "Found old 12d pod web-65d846d465-ck8zk",
+      "delete_attempt": "Tried deleting pod directly, it respawned",
+      "real_fix": "kubectl delete deployment web (removed old Deployment so pod stopped coming back)"
+    },
+    "access_nginx": {
+      "via_port_forward": "kubectl port-forward svc/my-nginx 8080:80 -> http://localhost:8080",
+      "via_nodeport": "kubectl get svc my-nginx -> external port 31670 (did not work on Docker Desktop)"
+    },
+    "docker_check": {
+      "nginx_containers": [
+        "my-nginx-594d78ffc7-hkgww",
+        "my-nginx-594d78ffc7-pt5hv",
+        "my-nginx-594d78ffc7-hmn8g"
+      ],
+      "note": "Other containers were Kubernetes system services (ignored)"
+    }
+  }
+}
