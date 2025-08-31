@@ -1,0 +1,39 @@
+{
+  "objective": "Learn Terraform by practicing on a local Docker Desktop Kubernetes cluster.",
+  "instructions": {
+    "description": "Provide a series of step-by-step hands-on exercises that build from simple to more advanced usage of Terraform with Kubernetes.",
+    "exercises": [
+      {
+        "title": "Exercise 1: Namespace",
+        "goal": "Use Terraform to create and destroy a namespace (init/plan/apply/destroy cycle)."
+      },
+      {
+        "title": "Exercise 2: Helm release (NGINX app)",
+        "goal": "Install an NGINX app using the Helm provider in Terraform."
+      },
+      {
+        "title": "Exercise 3: Drift detection",
+        "goal": "Delete a resource manually with kubectl, then reconcile with Terraform."
+      },
+      {
+        "title": "Exercise 4: Bundled stack",
+        "goal": "Deploy an ingress controller and a demo app together in one terraform apply."
+      },
+      {
+        "title": "Exercise 5: Variables, outputs, secrets",
+        "goal": "Practice using variables, outputs, and a Kubernetes Secret resource."
+      }
+    ],
+    "requirements": [
+      "Show minimal Terraform code for each exercise (versions.tf, main.tf, etc.).",
+      "List exact commands to run (terraform init, plan, apply, destroy, plus kubectl/helm checks).",
+      "Include cleanup steps so the environment can be reset between exercises.",
+      "Explain what is being learned in each step."
+    ],
+    "assumptions": [
+      "Kubernetes context is docker-desktop.",
+      "Examples should be self-contained in separate folders.",
+      "Exercises should be beginner-friendly but practical."
+    ]
+  }
+}
