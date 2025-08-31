@@ -1,4 +1,3 @@
-@"
 terraform {
   required_providers {
     kubernetes = {
@@ -7,7 +6,8 @@ terraform {
     }
   }
 }
+
 provider "kubernetes" {
+  config_path    = "C:/Users/1112j/.kube/config"
   config_context = "docker-desktop"
 }
-"@ | Out-File versions.tf -Encoding utf8
