@@ -3,6 +3,7 @@ resource "helm_release" "nginx" {
   repository = "https://charts.bitnami.com/bitnami"
   chart      = "nginx"
   namespace  = "default"
+  version = "21.1.23"
 
   values = [
     <<-EOF
