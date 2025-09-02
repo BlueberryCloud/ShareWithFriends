@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Kubernetes Flashcards (Dark Mode)</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #121212;
+      color: #f0f0f0;
+      margin: 0;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    h1 {
+      margin-bottom: 20px;
+      color: #f5f5f5;
+    }
+    .flashcards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 20px;
+      width: 100%;
+      max-width: 1200px;
+    }
+    .card {
+      perspective: 1000px;
+    }
+    .inner {
+      position: relative;
+      width: 100%;
+      padding-top: 70%;
+      transition: transform 0.6s;
+      transform-style: preserve-3d;
+      cursor: pointer;
+    }
+    .card.flipped .inner {
+      transform: rotateY(180deg);
+    }
+    .front, .back {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      backface-visibility: hidden;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.6);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 15px;
+      text-align: center;
+      font-size: 15px;
+    }
+    .front {
+      background: #1e1e1e;
+      color: #f0f0f0;
+    }
+    .back {
+      transform: rotateY(180deg);
+      background: #2979ff;
+      color: white;
+    }
+  </style>
+</head>
+<body>
+  <h1>Kubernetes Flashcards</h1>
+  <div class="flashcards">
+    <div class="card"><div class="inner">
+      <div class="front">What is a Kubernetes Cluster?</div>
+      <div class="back">A collection of nodes governed by a single control plane that maintains the desired state.</div>
+    </div></div>
+    <div class="card"><div class="inner">
+      <div class="front">What is a Node?</div>
+      <div class="back">A physical or virtual machine that runs kubelet and a container runtime, executes pods, and reports status to the API server.</div>
+    </div></div>
+    <div class="card"><div class="inner">
+      <div class="front">What is a Pod?</div>
+      <div class="back">The smallest deployable unit in Kubernetes, consisting of one or more containers with a shared network namespace and optional shared storage.</div>
+    </div></div>
+    <div class="card"><div class="inner">
+      <div class="front">What is a Deployment?</div>
+      <div class="back">Manages ReplicaSets, performs rolling updates/rollbacks, and ensures replicas stay at the desired version and count.</div>
+    </div></div>
+    <div class="card"><div class="inner">
+      <div class="front">What is a ReplicaSet?</div>
+      <div class="back">Ensures a specified number of identical pod replicas are running at all times.</div>
+    </div></div>
+    <div class="card"><div class="inner">
+      <div class="front">What is a Service?</div>
+      <div class="back">Provides a stable ClusterIP/DNS name and load-balances traffic across matching pods using label selectors.</div>
+    </div></div>
+    <div class="card"><div class="inner">
+      <div class="front">What is an Ingress?</div>
+      <div class="back">Provides HTTP(S) entry into the cluster, with rules managed by an Ingress controller to route requests to Services.</div>
+    </div></div>
+    <div class="card"><div class="inner">
+      <div class="front">What is a Namespace?</div>
+      <div class="back">A logical scope within a cluster for organizing resources, applying RBAC, quotas, policies, and limits.</div>
+    </div></div>
+    <div class="card"><div class="inner">
+      <div class="front">What are ConfigMaps &amp; Secrets?</div>
+      <div class="back">Objects that inject configuration and sensitive data into pods (env vars or files). Secrets are base64-encoded and can be encrypted at rest.</div>
+    </div></div>
+    <div class="card"><div class="inner">
+      <div class="front">What is a Volume?</div>
+      <div class="back">Storage attached to pods, either ephemeral (emptyDir) or persistent (via PVCs/PVs and storage classes).</div>
+    </div></div>
+    <div class="card"><div class="inner">
+      <div class="front">What is the Control Plane?</div>
+      <div class="back">Components (API Server, Scheduler, Controllers, etcd) that validate/persist state, assign pods, and reconcile desired vs. actual state.</div>
+    </div></div>
+    <div class="card"><div class="inner">
+      <div class="front">What is the Kubelet?</div>
+      <div class="back">Agent on each node that ensures containers are created, healthy, and restarted according to pod specs from the API server.</div>
+    </div></div>
+    <div class="card"><div class="inner">
+      <div class="front">What is Kube-proxy?</div>
+      <div class="back">Programs node-level rules so Service virtual IPs route traffic to healthy pod endpoints.</div>
+    </div></div>
+    <div class="card"><div class="inner">
+      <div class="front">What is CoreDNS?</div>
+      <div class="back">Resolves Service and Pod DNS names to cluster IPs, integrating with the Kubernetes API.</div>
+    </div></div>
+    <div class="card"><div class="inner">
+      <div class="front">What is a Horizontal Pod Autoscaler?</div>
+      <div class="back">Adjusts pod replicas based on metrics (CPU, memory, or custom) within defined bounds.</div>
+    </div></div>
+    <div class="card"><div class="inner">
+      <div class="front">What is a DaemonSet?</div>
+      <div class="back">Ensures one (or more) pod runs on every node (e.g., log shippers, monitoring agents, CNI components).</div>
+    </div></div>
+    <div class="card"><div class="inner">
+      <div class="front">What is a StatefulSet?</div>
+      <div class="back">Manages stateful apps with stable network IDs, persistent storage per replica, and ordered rollout/termination.</div>
+    </div></div>
+  </div>
+
+  <script>
+    document.querySelectorAll('.card').forEach(card => {
+      card.addEventListener('click', () => {
+        card.classList.toggle('flipped');
+      });
+    });
+  </script>
+</body>
+</html>
