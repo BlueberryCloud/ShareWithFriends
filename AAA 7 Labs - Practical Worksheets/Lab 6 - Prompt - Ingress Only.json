@@ -1,0 +1,44 @@
+{
+  "objective": "Understand the difference between NodePort and Ingress in Kubernetes using raw kubectl commands.",
+  "instructions": {
+    "description": "Practice Kubernetes networking by exposing an nginx pod via NodePort (numbers) and Ingress (names).",
+    "steps": [
+      {
+        "title": "NodePort Demo",
+        "commands": [
+          "kubectl run nodeport-demo --image=nginx:latest --port=80",
+          "kubectl expose pod nodeport-demo --name=nodeport-demo --port=80 --type=NodePort",
+          "kubectl get svc nodeport-demo",
+          "curl http://127.0.0.1:<NodePort>"
+        ],
+        "goal": "Show that accessing the service requires an IP address and random high port (numbers)."
+      },
+      {
+        "title": "Ingress Demo",
+        "commands": [
+          "kubectl run ingress-demo --image=nginx:latest --port=80",
+          "kubectl expose pod ingress-demo --name=ingress-demo --port=80",
+          "kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.11.1/deploy/static/provider/cloud/deploy.yaml",
+          "kubectl get pods -n ingress-nginx -w",
+          "kubectl apply -f - <<EOF\napiVersion: networking.k8s.io/v1\nkind: Ingress\nmetadata:\n  name: ingress-demo\nspec:\n  rules:\n  - host: nginx.local\n    http:\n      paths:\n      - path: /\n        pathType: Prefix\n        backend:\n          service:\n            name: ingress-demo\n            port:\n              number: 80\nEOF",
+          "Edit hosts file (C:\\Windows\\System32\\drivers\\etc\\hosts) and add: 127.0.0.1 nginx.local",
+          "curl http://nginx.local"
+        ],
+        "goal": "Show that accessing the service works with a hostname on port 80 (names), just like the real internet."
+      },
+      {
+        "title": "Cleanup",
+        "commands": [
+          "kubectl delete pod nodeport-demo",
+          "kubectl delete svc nodeport-demo",
+          "kubectl delete pod ingress-demo",
+          "kubectl delete svc ingress-demo",
+          "kubectl delete ingress ingress-demo",
+          "kubectl delete ns ingress-nginx --force --grace-period=0"
+        ],
+        "goal": "Reset the cluster to a clean state."
+      }
+    ],
+    "key_learning": "NodePort requires IP + random port numbers, while Ingress allows clean hostnames on standard ports (80/443)."
+  }
+}
