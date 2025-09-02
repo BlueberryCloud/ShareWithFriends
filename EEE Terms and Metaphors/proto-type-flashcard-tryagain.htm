@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Kubernetes Flashcards (Fixed Font Size)</title>
+  <title>Kubernetes Flashcards (All 17 Terms)</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <style>
     body {
@@ -63,35 +63,32 @@
       background: #e53935;
       color: #ffffff;
     }
-    /* Fixed font size (edit here to change everywhere) */
+    /* Fixed font size (change here to affect all cards) */
     .flash-text {
-      font-size: 36px;  /* change this value to resize text */
+      font-size: 36px;  /* adjust this number yourself */
     }
   </style>
 </head>
 <body>
   <h1>Kubernetes Flashcards</h1>
   <div class="flashcards">
-    <div class="card"><div class="inner">
-      <div class="front flash-text">What is a Kubernetes Cluster?</div>
-      <div class="back flash-text">A collection of nodes governed by a single control plane that maintains the desired state.</div>
-    </div></div>
-    <div class="card"><div class="inner">
-      <div class="front flash-text">What is a Node?</div>
-      <div class="back flash-text">A physical or virtual machine that runs kubelet and a container runtime, executes pods, and reports status to the API server.</div>
-    </div></div>
-    <div class="card"><div class="inner">
-      <div class="front flash-text">What is a Pod?</div>
-      <div class="back flash-text">The smallest deployable unit in Kubernetes, consisting of one or more containers with a shared network namespace and optional shared storage.</div>
-    </div></div>
-    <div class="card"><div class="inner">
-      <div class="front flash-text">What is a Deployment?</div>
-      <div class="back flash-text">Manages ReplicaSets, performs rolling updates/rollbacks, and ensures replicas stay at the desired version and count.</div>
-    </div></div>
-    <div class="card"><div class="inner">
-      <div class="front flash-text">What is a Service?</div>
-      <div class="back flash-text">Provides a stable ClusterIP/DNS name and load-balances traffic across matching pods using label selectors.</div>
-    </div></div>
+    <div class="card"><div class="inner"><div class="front flash-text">What is a Kubernetes Cluster?</div><div class="back flash-text">A collection of nodes governed by a single control plane that maintains the desired state.</div></div></div>
+    <div class="card"><div class="inner"><div class="front flash-text">What is a Node?</div><div class="back flash-text">A physical or virtual machine that runs kubelet and a container runtime, executes pods, and reports status to the API server.</div></div></div>
+    <div class="card"><div class="inner"><div class="front flash-text">What is a Pod?</div><div class="back flash-text">The smallest deployable unit in Kubernetes, consisting of one or more containers with a shared network namespace and optional shared storage.</div></div></div>
+    <div class="card"><div class="inner"><div class="front flash-text">What is a Deployment?</div><div class="back flash-text">Manages ReplicaSets, performs rolling updates/rollbacks, and ensures replicas stay at the desired version and count.</div></div></div>
+    <div class="card"><div class="inner"><div class="front flash-text">What is a ReplicaSet?</div><div class="back flash-text">Ensures a specified number of identical pod replicas are running at all times.</div></div></div>
+    <div class="card"><div class="inner"><div class="front flash-text">What is a Service?</div><div class="back flash-text">Provides a stable ClusterIP/DNS name and load-balances traffic across matching pods using label selectors.</div></div></div>
+    <div class="card"><div class="inner"><div class="front flash-text">What is an Ingress?</div><div class="back flash-text">Provides HTTP(S) entry into the cluster, with rules managed by an Ingress controller to route requests to Services.</div></div></div>
+    <div class="card"><div class="inner"><div class="front flash-text">What is a Namespace?</div><div class="back flash-text">A logical scope within a cluster for organizing resources, applying RBAC, quotas, policies, and limits.</div></div></div>
+    <div class="card"><div class="inner"><div class="front flash-text">What are ConfigMaps &amp; Secrets?</div><div class="back flash-text">Objects that inject configuration and sensitive data into pods (env vars or files). Secrets are base64-encoded and can be encrypted at rest.</div></div></div>
+    <div class="card"><div class="inner"><div class="front flash-text">What is a Volume?</div><div class="back flash-text">Storage attached to pods, either ephemeral (emptyDir) or persistent (via PVCs/PVs and storage classes).</div></div></div>
+    <div class="card"><div class="inner"><div class="front flash-text">What is the Control Plane?</div><div class="back flash-text">Components (API Server, Scheduler, Controllers, etcd) that validate/persist state, assign pods, and reconcile desired vs. actual state.</div></div></div>
+    <div class="card"><div class="inner"><div class="front flash-text">What is the Kubelet?</div><div class="back flash-text">Agent on each node that ensures containers are created, healthy, and restarted according to pod specs from the API server.</div></div></div>
+    <div class="card"><div class="inner"><div class="front flash-text">What is Kube-proxy?</div><div class="back flash-text">Programs node-level rules so Service virtual IPs route traffic to healthy pod endpoints.</div></div></div>
+    <div class="card"><div class="inner"><div class="front flash-text">What is CoreDNS?</div><div class="back flash-text">Resolves Service and Pod DNS names to cluster IPs, integrating with the Kubernetes API.</div></div></div>
+    <div class="card"><div class="inner"><div class="front flash-text">What is a Horizontal Pod Autoscaler?</div><div class="back flash-text">Adjusts pod replicas based on metrics (CPU, memory, or custom) within defined bounds.</div></div></div>
+    <div class="card"><div class="inner"><div class="front flash-text">What is a DaemonSet?</div><div class="back flash-text">Ensures one (or more) pod runs on every node (e.g., log shippers, monitoring agents, CNI components).</div></div></div>
+    <div class="card"><div class="inner"><div class="front flash-text">What is a StatefulSet?</div><div class="back flash-text">Manages stateful apps with stable network IDs, persistent storage per replica, and ordered rollout/termination.</div></div></div>
   </div>
 
   <script>
