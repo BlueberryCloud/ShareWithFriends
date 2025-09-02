@@ -1,0 +1,48 @@
+{
+  "title": "Ingress Demo with PowerShell",
+  "date": "2025-09-02",
+  "steps": [
+    {
+      "step": 1,
+      "command": "kubectl run ingress-demo --image=nginx:latest --port=80",
+      "explanation": "Created an nginx pod running on port 80."
+    },
+    {
+      "step": 2,
+      "command": "kubectl expose pod ingress-demo --name=ingress-demo --port=80",
+      "explanation": "Exposed the nginx pod as a service inside the cluster."
+    },
+    {
+      "step": 3,
+      "command": "kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.11.1/deploy/static/provider/cloud/deploy.yaml",
+      "explanation": "Installed the ingress-nginx controller into its own namespace."
+    },
+    {
+      "step": 4,
+      "command": "kubectl get pods -n ingress-nginx -w",
+      "explanation": "Watched the ingress controller pods start up in the ingress-nginx namespace."
+    },
+    {
+      "step": 5,
+      "command": "kubectl apply -f joes-ingres.yaml",
+      "explanation": "Applied the Ingress resource YAML which routes nginx.local traffic to the ingress-demo service."
+    },
+    {
+      "step": 6,
+      "command": "kubectl get ingress",
+      "explanation": "Verified that the ingress resource was created."
+    },
+    {
+      "step": 7,
+      "command": "Edit hosts file at C:\\\\Windows\\\\System32\\\\drivers\\\\etc\\\\hosts",
+      "explanation": "Mapped nginx.local to 127.0.0.1 so the local machine resolves the hostname."
+    },
+    {
+      "step": 8,
+      "command": "curl http://nginx.local",
+      "explanation": "Tested access to the nginx welcome page via the ingress rule."
+    }
+  ],
+  "key_learning": "NodePort exposes services with random ports, while Ingress provides clean hostnames on standard ports (80/443).",
+  "namespace_note": "The -n flag specifies the namespace. Ingress controller pods run in the ingress-nginx namespace."
+}
