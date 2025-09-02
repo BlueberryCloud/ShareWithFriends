@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Kubernetes Flashcards (Dark + Red Flip)</title>
+  <title>Kubernetes Flashcards (Stacked Mobile)</title>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -19,11 +19,11 @@
       color: #f5f5f5;
     }
     .flashcards {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      gap: 20px;
+      display: flex;
+      flex-direction: column; /* stack vertically */
+      gap: 30px;
       width: 100%;
-      max-width: 1200px;
+      max-width: 600px;
     }
     .card {
       perspective: 1000px;
@@ -31,7 +31,7 @@
     .inner {
       position: relative;
       width: 100%;
-      padding-top: 70%;
+      padding-top: 120%; /* taller for readability */
       transition: transform 0.6s;
       transform-style: preserve-3d;
       cursor: pointer;
@@ -49,18 +49,18 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      padding: 15px;
+      padding: 20px;
       text-align: center;
-      font-size: 15px;
+      font-size: 20px; /* bigger font for phone use */
     }
     .front {
       background: #1e1e1e;
       color: #f0f0f0;
     }
     .back {
-      transform: rotateY(169deg);
-      background: #500e0d; /* red background */
-      color: #ffffff;      /* white text */
+      transform: rotateY(180deg);
+      background: #e53935; /* red */
+      color: #ffffff;      /* white */
     }
   </style>
 </head>
@@ -82,10 +82,6 @@
     <div class="card"><div class="inner">
       <div class="front">What is a Deployment?</div>
       <div class="back">Manages ReplicaSets, performs rolling updates/rollbacks, and ensures replicas stay at the desired version and count.</div>
-    </div></div>
-    <div class="card"><div class="inner">
-      <div class="front">What is a ReplicaSet?</div>
-      <div class="back">Ensures a specified number of identical pod replicas are running at all times.</div>
     </div></div>
     <div class="card"><div class="inner">
       <div class="front">What is a Service?</div>
