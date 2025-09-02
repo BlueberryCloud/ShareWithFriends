@@ -1,0 +1,83 @@
+{
+  "exercise": "Blue-Green Deployment Demo with Diner A and Diner B (Pho Soup)",
+  "namespace": "diner-lab",
+  "steps": [
+    {
+      "step": 0,
+      "title": "Pre-requisites",
+      "details": [
+        "Ingress-NGINX controller installed and running",
+        "Add hosts entry: 127.0.0.1 diner.local"
+      ]
+    },
+    {
+      "step": 1,
+      "title": "Create Namespace",
+      "command": "kubectl create namespace diner-lab"
+    },
+    {
+      "step": 2,
+      "title": "Create ConfigMaps for diner HTML",
+      "commands": [
+        "kubectl -n diner-lab create configmap diner-a-html --from-literal=index.html='<html><body><h1>Diner A</h1><p>Pho Soup (normal)</p></body></html>'",
+        "kubectl -n diner-lab create configmap diner-b-html --from-literal=index.html='<html><body><h1>Diner B</h1><p>Pho Soup (experimental)</p></body></html>'"
+      ]
+    },
+    {
+      "step": 3,
+      "title": "Deploy Diner A and Diner B",
+      "apply": [
+        "Deployment + Service for diner-a",
+        "Deployment + Service for diner-b"
+      ],
+      "note": "Both mount their HTML from respective ConfigMaps"
+    },
+    {
+      "step": 4,
+      "title": "Ingress - point to Diner A (default)",
+      "command": "kubectl -n diner-lab apply -f ingress-a.yaml",
+      "note": "Ingress host = diner.local → diner-a-svc"
+    },
+    {
+      "step": 5,
+      "title": "Test access",
+      "commands": [
+        "curl.exe -H \"Host: diner.local\" http://127.0.0.1/",
+        "Expected: HTML from Diner A"
+      ]
+    },
+    {
+      "step": 6,
+      "title": "Switch Ingress to Diner B",
+      "command": "kubectl -n diner-lab patch ingress diner-ingress --type='json' -p='[{\"op\":\"replace\",\"path\":\"/spec/rules/0/http/paths/0/backend/service/name\",\"value\":\"diner-b-svc\"}]'",
+      "note": "Ingress host = diner.local → diner-b-svc"
+    },
+    {
+      "step": 7,
+      "title": "Test again",
+      "commands": [
+        "curl.exe -H \"Host: diner.local\" http://127.0.0.1/",
+        "Expected: HTML from Diner B"
+      ]
+    },
+    {
+      "step": 8,
+      "title": "Roll back to Diner A",
+      "command": "kubectl -n diner-lab patch ingress diner-ingress --type='json' -p='[{\"op\":\"replace\",\"path\":\"/spec/rules/0/http/paths/0/backend/service/name\",\"value\":\"diner-a-svc\"}]'"
+    },
+    {
+      "step": 9,
+      "title": "Debugging shortcuts",
+      "commands": [
+        "kubectl -n diner-lab get pods,svc,endpoints",
+        "kubectl -n diner-lab describe ingress diner-ingress",
+        "kubectl -n ingress-nginx logs deploy/ingress-nginx-controller --tail=200"
+      ]
+    },
+    {
+      "step": 10,
+      "title": "Cleanup",
+      "command": "kubectl delete namespace diner-lab"
+    }
+  ]
+}
