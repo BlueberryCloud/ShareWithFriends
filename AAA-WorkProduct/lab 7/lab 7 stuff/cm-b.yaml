@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: diner-b-html
+  namespace: diner-lab
+data:
+  index.html: |
+    <html><body><h1>Diner B</h1><p>Pho Soup (with crack + cocaine)</p></body></html>

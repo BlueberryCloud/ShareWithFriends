@@ -1,0 +1,87 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: diner-a
+  namespace: diner-lab
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: diner-a
+  template:
+    metadata:
+      labels:
+        app: diner-a
+    spec:
+      containers:
+        - name: web
+          image: nginx:stable-alpine
+          ports:
+            - containerPort: 80
+          volumeMounts:
+            - name: html
+              mountPath: /usr/share/nginx/html/index.html
+              subPath: index.html
+      volumes:
+        - name: html
+          configMap:
+            name: diner-a-html
+            items:
+              - key: index.html
+                path: index.html
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: diner-a-svc
+  namespace: diner-lab
+spec:
+  selector:
+    app: diner-a
+  ports:
+    - port: 80
+      targetPort: 80
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: diner-b
+  namespace: diner-lab
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: diner-b
+  template:
+    metadata:
+      labels:
+        app: diner-b
+    spec:
+      containers:
+        - name: web
+          image: nginx:stable-alpine
+          ports:
+            - containerPort: 80
+          volumeMounts:
+            - name: html
+              mountPath: /usr/share/nginx/html/index.html
+              subPath: index.html
+      volumes:
+        - name: html
+          configMap:
+            name: diner-b-html
+            items:
+              - key: index.html
+                path: index.html
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: diner-b-svc
+  namespace: diner-lab
+spec:
+  selector:
+    app: diner-b
+  ports:
+    - port: 80
+      targetPort: 80

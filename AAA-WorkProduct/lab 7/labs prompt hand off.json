@@ -1,0 +1,166 @@
+# Blue-Green Deployment Demo (ConfigMaps + Ingress, kubectl-only)
+
+# 1) Namespace
+kubectl create namespace diner-lab
+
+# 2) ConfigMaps
+kubectl apply -f - <<EOF
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: diner-a-html
+  namespace: diner-lab
+data:
+  index.html: |
+    <html><body><h1>Diner A</h1><p>Pho Soup (normal)</p></body></html>
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: diner-b-html
+  namespace: diner-lab
+data:
+  index.html: |
+    <html><body><h1>Diner B</h1><p>Pho Soup (with crack + cocaine)</p></body></html>
+EOF
+
+# 3) Deployments + Services
+kubectl apply -f - <<EOF
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: diner-a
+  namespace: diner-lab
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: diner-a
+  template:
+    metadata:
+      labels:
+        app: diner-a
+    spec:
+      containers:
+        - name: web
+          image: nginx:stable-alpine
+          ports:
+            - containerPort: 80
+          volumeMounts:
+            - name: html
+              mountPath: /usr/share/nginx/html/index.html
+              subPath: index.html
+      volumes:
+        - name: html
+          configMap:
+            name: diner-a-html
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: diner-a-svc
+  namespace: diner-lab
+spec:
+  selector:
+    app: diner-a
+  ports:
+    - port: 80
+      targetPort: 80
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: diner-b
+  namespace: diner-lab
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: diner-b
+  template:
+    metadata:
+      labels:
+        app: diner-b
+    spec:
+      containers:
+        - name: web
+          image: nginx:stable-alpine
+          ports:
+            - containerPort: 80
+          volumeMounts:
+            - name: html
+              mountPath: /usr/share/nginx/html/index.html
+              subPath: index.html
+      volumes:
+        - name: html
+          configMap:
+            name: diner-b-html
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: diner-b-svc
+  namespace: diner-lab
+spec:
+  selector:
+    app: diner-b
+  ports:
+    - port: 80
+      targetPort: 80
+EOF
+
+# 4) Ingress (start on A)
+kubectl apply -f - <<EOF
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: diner-ingress
+  namespace: diner-lab
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: diner.local
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: diner-a-svc
+                port:
+                  number: 80
+EOF
+
+# 5) Test (should show Diner A)
+curl -H "Host: diner.local" http://127.0.0.1/
+
+# 6) Flip Ingress to B
+kubectl apply -f - <<EOF
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: diner-ingress
+  namespace: diner-lab
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: diner.local
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: diner-b-svc
+                port:
+                  number: 80
+EOF
+
+# 7) Test again (should show Diner B)
+curl -H "Host: diner.local" http://127.0.0.1/
+
+# 8) Roll back to A (re-apply ingress pointing to diner-a-svc)
