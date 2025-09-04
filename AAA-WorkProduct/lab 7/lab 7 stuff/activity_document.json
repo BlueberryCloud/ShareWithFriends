@@ -1,0 +1,34 @@
+{
+  "exercise": "Blue-Green Deployment Demo (Pho Soup)",
+  "status": {
+    "pods": "diner-a and diner-b running fine",
+    "services": "ClusterIP only, internal (diner-a-svc, diner-b-svc)",
+    "ingress": "Configured with host diner.local, class=nginx",
+    "issue": "Windows port 80 conflict (svchost/IIS/HTTP.sys) prevented direct access via http://diner.local/",
+    "workaround": "Port-forward Ingress controller to high port (53219)"
+  },
+  "flow": {
+    "mini_bridge": "ClusterIP services inside the cluster",
+    "big_bridge": "Ingress controller exposed to host",
+    "problem": "Big bridge (port 80) was blocked by Windows service",
+    "solution": "Use alternate high port mapping"
+  },
+  "commands": {
+    "check_status": [
+      "kubectl -n diner-lab get pods,svc,ingress,endpoints",
+      "kubectl -n diner-lab get deploy",
+      "kubectl -n diner-lab get configmaps",
+      "kubectl -n diner-lab describe ingress diner-ingress"
+    ],
+    "port_forward": "kubectl -n ingress-nginx port-forward svc/ingress-nginx-controller 53219:80",
+    "test_a": "curl.exe -H \"Host: diner.local\" http://127.0.0.1:53219/",
+    "switch_to_b": "kubectl -n diner-lab patch ingress diner-ingress --type='json' -p='[{\"op\":\"replace\",\"path\":\"/spec/rules/0/http/paths/0/backend/service/name\",\"value\":\"diner-b-svc\"}]'",
+    "test_b": "curl.exe -H \"Host: diner.local\" http://127.0.0.1:53219/",
+    "switch_back_to_a": "kubectl -n diner-lab patch ingress diner-ingress --type='json' -p='[{\"op\":\"replace\",\"path\":\"/spec/rules/0/http/paths/0/backend/service/name\",\"value\":\"diner-a-svc\"}]'"
+  },
+  "notes": {
+    "hosts_file": "127.0.0.1 diner.local",
+    "why_port_forward": "Avoids conflict with Windows processes on port 80",
+    "browser_test": "http://diner.local:53219/ works once port-forward is active"
+  }
+}
