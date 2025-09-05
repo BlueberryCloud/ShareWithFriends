@@ -8,13 +8,13 @@ metadata:
 spec:
   ingressClassName: nginx
   rules:
-    - host: diner.local
-      http:
-        paths:
-          - path: /
-            pathType: Prefix
-            backend:
-              service:
-                name: diner-a-svc
-                port:
-                  number: 80
+  - host: diner.local
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: diner-a-svc   # Pointing at Diner A for now
+            port:
+              number: 80
