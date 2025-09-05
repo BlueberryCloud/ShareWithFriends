@@ -1,0 +1,28 @@
+{
+  "exercise": "Kubernetes Canary Deployment Demo",
+  "namespace": "diner-lab",
+  "options": {
+    "option1": {
+      "title": "Single Service, Replica-Weighted Canary",
+      "why": "We want to see how traffic naturally splits when both the stable and canary pods live behind the same Service. Kubernetes balances requests across pods, so if we scale stable vs canary differently, we approximate percentages (e.g. 4 pods v1 vs 1 pod v2 ≈ 80/20).",
+      "steps": [
+        "Label both deployments so they share the same selector: `kubectl label deployment diner-a -n diner-lab app=diner --overwrite` and `kubectl label deployment diner-b -n diner-lab app=diner --overwrite`.",
+        "Create a new Service (`diner-svc`) that selects pods with `app=diner`.",
+        "Update Ingress to point to `diner-svc` instead of diner-a-svc/diner-b-svc.",
+        "Scale deployments to control traffic: `kubectl scale deployment diner-a -n diner-lab --replicas=4` (stable) and `kubectl scale deployment diner-b -n diner-lab --replicas=1` (canary)."
+      ],
+      "result": "Traffic is split based on pod replicas (≈80% stable, ≈20% canary). Both deployments remain running."
+    },
+    "option2": {
+      "title": "Ingress Annotations Canary (NGINX)",
+      "why": "We want finer control over canary percentages without merging services. NGINX Ingress supports canary annotations, letting us divert exactly 5%, 10%, or 20% of traffic to the canary service while the stable service keeps handling the rest.",
+      "steps": [
+        "Keep diner-ingress pointing to diner-a-svc (stable).",
+        "Create a new Ingress resource (diner-ingress-canary) with annotations: `nginx.ingress.kubernetes.io/canary: 'true'` and `nginx.ingress.kubernetes.io/canary-weight: '20'`.",
+        "Apply the canary ingress so that diner-b-svc receives 20% of the traffic automatically."
+      ],
+      "result": "Traffic split is controlled at the Ingress level (80% to diner-a-svc, 20% to diner-b-svc). Both services remain running."
+    }
+  },
+  "note": "We are doing both approaches to learn the difference. Option 1 shows how Kubernetes balances traffic internally based on replicas (simpler, but approximate). Option 2 shows how production setups use Ingress annotations for precise control (more realistic). Neither requires taking down diner-a or diner-b."
+}
