@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: diner-a
+  namespace: diner-lab
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: diner-a
+  template:
+    metadata:
+      labels:
+        app: diner-a
+    spec:
+      containers:
+        - name: web
+          image: nginx:stable-alpine
+          ports:
+            - containerPort: 80
+          volumeMounts:
+            - name: html
+              mountPath: /usr/share/nginx/html   # mount full dir so ConfigMap index.html overwrites default
+      volumes:
+        - name: html
+          configMap:
+            name: diner-a-html
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: diner-a-svc
+  namespace: diner-lab
+spec:
+  selector:
+    app: diner-a
+  ports:
+    - port: 80
+      targetPort: 80
