@@ -1,0 +1,53 @@
+=========================================================
+ 🟦 Option 1 — Single Service, Replica-Weighted Canary
+=========================================================
+
+          +-------------------+
+          |   Ingress Rule    |
+          | diner.local  -->  |
+          +---------+---------+
+                    |
+                    v
+              +------------+
+              | diner-svc  |
+              | (app=diner)|
+              +------------+
+             /      |       \
+            v       v        v
+         [Pod A] [Pod A]  [Pod B]
+         v1      v1       v2 (canary)
+
+Traffic split ≈ based on replicas
+(e.g. 4x v1 pods, 1x v2 pod = ~80/20)
+
+
+=========================================================
+ 🟧 Option 2 — Ingress Annotations Canary
+=========================================================
+
+          +---------------------+
+          |   Ingress Rule A    |
+          | diner.local -> A    |
+          +----------+----------+
+                     |
+                     v
+               +-----------+
+               | diner-a   |
+               | (stable)  |
+               +-----------+
+
+          +---------------------+
+          |   Ingress Rule B    |
+          | diner.local -> B    |
+          | canary: true        |
+          | weight: 20          |
+          +----------+----------+
+                     |
+                     v
+               +-----------+
+               | diner-b   |
+               | (canary)  |
+               +-----------+
+
+Traffic split = precisely controlled
+(80% to A, 20% to B by ingress annotations)
