@@ -15,6 +15,6 @@ spec:
         pathType: Prefix
         backend:
           service:
-            name: diner-a-svc   # Pointing at Diner A for now
+            name: diner-svc   # Pointing at Diner A for now
             port:
               number: 80

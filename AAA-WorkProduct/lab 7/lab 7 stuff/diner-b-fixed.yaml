@@ -7,11 +7,11 @@ spec:
   replicas: 1
   selector:
     matchLabels:
-      app: diner-b
+      app: diner
   template:
     metadata:
       labels:
-        app: diner-b
+        app: diner
     spec:
       containers:
         - name: web
